@@ -1,0 +1,259 @@
+/* Estilos generales */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  background-color: #fef9f9;
+  color: #333;
+  padding: 0 20px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffe5ec;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 60px;
+  width: 60px;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #7d5a5a;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+  color: #ff6f91;
+}
+
+main section {
+  background: #fff0f6;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+}
+
+main h2, main h3 {
+  color: #7d5a5a;
+}
+
+footer {
+  text-align: center;
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #ffe5ec;
+  border-radius: 8px;
+  color: #7d5a5a;
+}
+
+.muestra-intro,
+.muestra {
+  text-align: center;
+  margin: auto;
+}
+
+.galeria {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 30px;
+  margin: 30px auto;
+  width: 100%;
+  max-width: 1200px;
+  justify-items: center;
+}
+
+
+.animal-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  padding: 24px 12px 20px 12px;
+  max-width: 200px;
+  width: 100%;
+  text-align: center;
+}
+
+.animal-img {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 2.8rem;
+  color: #7d5a5a;
+  text-align: center;
+}
+
+/* Responsive: tablets */
+@media (max-width: 900px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .logo-container {
+    justify-content: center;
+    width: 100%;
+  }
+
+  nav ul {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .galeria {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+}
+
+/* Responsive: móviles */
+@media (max-width: 600px) {
+  body {
+    padding: 0 5px;
+    background-color: lightblue; /* Prueba visual */
+  }
+
+  header {
+    padding: 10px 5px;
+  }
+
+  .logo {
+    width: 70px;
+    height: 70px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  main section {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  nav ul {
+    font-size: 1rem;
+  }
+
+  .boton-adoptar {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .galeria {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 20px;
+    justify-items: center;
+  }
+
+  .animal-img {
+    width: 100%;
+    height: auto;
+  }
+}
+.filtros {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.btn-filtro {
+  background: #ffb6c1;
+  border: none;
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-filtro:hover {
+  background: #ff6f91;
+  color: white;
+}
+.filter-btn {
+  background-color: #ffb6c1;   /* Rosa claro, igual al esquema */
+  border: none;
+  padding: 10px 18px;
+  margin: 5px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-family: Arial, sans-serif; /* Igual que body */
+  font-size: 1rem;
+  color: #7d5a5a;  /* Mismo tono del texto principal */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* como las tarjetas */
+}
+
+.filter-btn:hover {
+  background-color: #ff6f91; /* rosa más fuerte al pasar */
+  color: #fff;
+  transform: scale(1.05); /* pequeño efecto al pasar */
+}
+
+.formulario-donacion {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #fefefe;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.formulario-donacion h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.formulario-donacion input,
+.formulario-donacion select,
+.formulario-donacion textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.imagen-noticia {
+  max-width: 100%;
+  width: 300px;
+  height: auto;
+  border-radius: 8px;
+  margin: 10px 0;
+  object-fit: cover;
+}

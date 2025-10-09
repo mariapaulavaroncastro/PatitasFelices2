@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login Administrador</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <main class="formulario">
+    <h2>Acceso Administrador</h2>
+    <form id="formLogin">
+      <label>Correo:</label> <!-- ✅ Cambiado de "Usuario" a "Correo" -->
+      <input type="text" name="correo" required />
+      <label>Contraseña:</label>
+      <input type="password" name="contrasena" required />
+      <button type="submit">Ingresar</button>
+    </form>
+  </main>
+
+  <script>
+    document.getElementById('formLogin').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const datos = Object.fromEntries(new FormData(e.target));
+
+      const res = await fetch('http://localhost:3000/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos)
+      });
+
+      const resultado = await res.json();
+      if (resultado.acceso) {
+        localStorage.setItem('adminId', resultado.id_admin);
+        window.location.href = 'panel.html';
+      } else {
+        alert('Credenciales incorrectas');
+      }
+    });
+  </script>
+</body>
+</html>

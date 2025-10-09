@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="icon" type="image/jpeg" href="../images/logo.jpg" />
+  <title>Noticias</title>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="../images/logo.jpg" alt="Logo Patitas Felices" class="logo" />
+    </div>
+    <h1>Noticias</h1>
+
+    <nav>
+      <ul>
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="../secciones/adopcion.html">Adopción</a></li>
+        <li><a href="../secciones/voluntariado.html">Voluntariado</a></li>
+        <li><a href="../secciones/donacion.html">Donación</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h3>Descubre cómo ayudamos a rescatar y cuidar animales en tu comunidad.</h3>
+    </section>
+
+    <!-- 🔽 Sección dinámica de noticias -->
+    <section class="noticias" id="contenedorNoticias"></section>
+  </main>
+
+  <footer>
+    <p>© 2025 Patitas Felices. Todos los derechos reservados.</p>
+  </footer>
+
+  <!-- 🔧 Script para cargar noticias, reacciones y comentarios -->
+  <script>
+    async function cargarNoticias() {
+      const res = await fetch('http://localhost:3000/noticias');
+      const noticias = await res.json();
+      const contenedor = document.getElementById('contenedorNoticias');
+      contenedor.innerHTML = '';
+
+      for (const noticia of noticias) {
+        const bloque = document.createElement('article');
+        bloque.className = 'noticia';
+        bloque.innerHTML = `
+          <h4>${noticia.titulo}</h4>
+          <img src="http://localhost:3000/images/${noticia.imagen}" alt="Imagen de la noticia" class="imagen-noticia" onerror="this.src='../images/default.jpg'" />
+          <p>${noticia.contenido}</p>
+          <span class="fecha">${new Date(noticia.fecha_publicacion).toLocaleDateString()}</span>
+          <div class="interacciones">
+            <button onclick="reaccionar(${noticia.id_noticia}, this)">❤️ Me encanta (<span id="reacciones-${noticia.id_noticia}">0</span>)</button>
+            <div class="comentarios">
+              <textarea placeholder="Escribe un comentario..." onkeydown="comentar(event, ${noticia.id_noticia}, this)"></textarea>
+              <ul id="comentarios-${noticia.id_noticia}"></ul>
+            </div>
+          </div>
+        `;
+        contenedor.appendChild(bloque);
+        cargarComentarios(noticia.id_noticia);
+        cargarReacciones(noticia.id_noticia);
+      }
+    }
+
+    async function reaccionar(id, boton) {
+      await fetch(`http://localhost:3000/noticias/${id}/reaccionar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre: 'Anónimo', tipo: 'me_encanta' })
+      });
+      cargarReacciones(id);
+      boton.disabled = true;
+    }
+
+    async function cargarReacciones(id) {
+      const res = await fetch(`http://localhost:3000/noticias/${id}/reacciones`);
+      const datos = await res.json();
+      const contador = datos.find(r => r.tipo === 'me_encanta')?.cantidad || 0;
+      document.getElementById(`reacciones-${id}`).textContent = contador;
+    }
+
+    async function comentar(event, id, textarea) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        const texto = textarea.value.trim();
+        if (!texto) return;
+        await fetch(`http://localhost:3000/noticias/${id}/comentar`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ texto })
+        });
+        textarea.value = '';
+        cargarComentarios(id);
+      }
+    }
+
+    async function cargarComentarios(id) {
+      const res = await fetch(`http://localhost:3000/noticias/${id}/comentarios`);
+      const comentarios = await res.json();
+      const lista = document.getElementById(`comentarios-${id}`);
+      lista.innerHTML = '';
+      comentarios.forEach(c => {
+        const li = document.createElement('li');
+        li.textContent = c.texto;
+        lista.appendChild(li);
+      });
+    }
+
+    cargarNoticias();
+  </script>
+</body>
+</html>

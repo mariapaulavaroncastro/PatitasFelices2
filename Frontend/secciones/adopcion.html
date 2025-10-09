@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="icon" type="image/jpeg" href="../images/logo.jpg">
+  <title>Adopción</title>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="../images/logo.jpg" alt="Logo Patitas Felices" class="logo">
+    </div>
+    <h1>Adopción</h1>
+
+    <nav>
+      <ul>
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="../secciones/donacion.html">Donación</a></li>
+        <li><a href="../secciones/voluntariado.html">Voluntariado</a></li>
+        <li><a href="../secciones/noticias.html">Noticias</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h3>Conoce a nuestros amigos peludos que esperan una familia amorosa.</h3>
+    </section>
+
+    <!-- Botones de filtro -->
+    <section class="filtros">
+      <button class="filter-btn" data-animal="all">Todos</button>
+      <button class="filter-btn" data-animal="Perro">Perros</button>
+      <button class="filter-btn" data-animal="Gato">Gatos</button>
+      <button class="filter-btn" data-animal="Conejo">Conejos</button>
+      <button class="filter-btn" data-animal="Loro">Loros</button>
+    </section>
+
+    <section class="muestra">
+      <h2>Animales en Adopción</h2>
+      <div id="galeriaAdopciones" class="galeria"></div>
+    </section>
+
+    <section class="formulario-adopcion">
+      <h2>Solicita la adopción de uno de nuestros peluditos</h2>
+      <form id="formAdopcion">
+        <label>Nombre completo:</label><br>
+        <input type="text" name="nombre" required><br><br>
+
+        <label>Teléfono (formato internacional):</label><br>
+        <input type="text" name="telefono" placeholder="+573001234567" required><br><br>
+
+        <label>Correo electrónico:</label><br>
+        <input type="email" name="correo" required><br><br>
+
+        <label>Mascota que deseas adoptar:</label><br>
+        <select name="mascota" required id="selectorMascota">
+          <option value="">-- Selecciona una mascota --</option>
+        </select><br><br>
+
+        <label>Mensaje adicional:</label><br>
+        <textarea name="mensaje" rows="4"></textarea><br><br>
+
+        <button type="submit">Enviar solicitud</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Patitas Felices. Todos los derechos reservados.</p>
+  </footer>
+
+
+  
+  <script>
+    let animales = [];
+
+    async function cargarAdopciones() {
+      try {
+        const res = await fetch('http://localhost:3000/admin/adopciones');
+        animales = await res.json();
+        mostrarAnimales(animales);
+        llenarSelector(animales);
+      } catch (error) {
+        console.error('Error al cargar animales:', error);
+        document.getElementById('galeriaAdopciones').innerHTML = '<p>Error al cargar animales. Intenta más tarde.</p>';
+      }
+    }
+
+    function mostrarAnimales(lista) {
+      const contenedor = document.getElementById('galeriaAdopciones');
+      contenedor.innerHTML = '';
+
+      if (lista.length === 0) {
+        contenedor.innerHTML = '<p>No hay animales disponibles en este momento.</p>';
+        return;
+      }
+
+      lista.forEach(a => {
+        const card = document.createElement('div');
+        card.className = 'animal-card';
+        card.setAttribute('data-animal', a.categoria);
+        card.innerHTML = `
+          <img src="http://localhost:3000/images/${a.imagen}" alt="Foto de ${a.nombre}" class="animal-img" onerror="this.src='../images/default.jpg'" />
+          <h4>${a.nombre}</h4>
+          <p>${a.descripcion}</p>
+        `;
+        contenedor.appendChild(card);
+      });
+    }
+
+    function llenarSelector(lista) {
+      const selector = document.getElementById('selectorMascota');
+      selector.innerHTML = '<option value="">-- Selecciona una mascota --</option>';
+      lista.forEach(a => {
+        const option = document.createElement('option');
+        option.value = a.nombre;
+        option.textContent = a.nombre;
+        selector.appendChild(option);
+      });
+    }
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tipo = btn.getAttribute('data-animal');
+        if (tipo === 'all') {
+          mostrarAnimales(animales);
+        } else {
+          const filtrados = animales.filter(a => a.categoria.toLowerCase() === tipo.toLowerCase());
+          mostrarAnimales(filtrados);
+        }
+      });
+    });
+
+    document.getElementById('formAdopcion').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const datos = Object.fromEntries(new FormData(e.target));
+      try {
+        const respuesta = await fetch('http://localhost:3000/adopcion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+        const resultado = await respuesta.json();
+        alert(resultado.mensaje || 'Solicitud enviada');
+        e.target.reset();
+      } catch (error) {
+        alert('Error al enviar la solicitud');
+        console.error('Error en el envío:', error);
+      }
+    });
+
+    cargarAdopciones();
+  </script>
+</body>
+</html>

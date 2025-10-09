@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+  <title>Patitas Felices</title> 
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="images/logo.jpg" alt="Logo Patitas Felices" class="logo">
+    </div>
+    <h1>Patitas Felices</h1>
+
+    <nav aria-label="Navegación principal">
+      <ul>
+        <li><a href="secciones/adopcion.html" title="Ver animales disponibles para adopción">Adopción</a></li>
+        <li><a href="secciones/donacion.html" title="Contribuye con una donación">Donación</a></li>
+        <li><a href="secciones/voluntariado.html" title="Únete como voluntario">Voluntariado</a></li>
+        <li><a href="secciones/noticias.html" title="Lee las últimas noticias">Noticias</a></li>
+        <li><a href="admin/login.html" title="Acceso para administradores">Administrador</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h3>Un lugar donde conectamos historias de amor entre personas y animales. Aquí podrás leer nuestras noticias y conocer a los peluditos que buscan un hogar.</h3>
+    </section>
+
+    <section class="muestra-intro">
+      <h2>Animales en Adopción</h2>
+      <div id="galeriaAdopciones" class="galeria"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Patitas Felices. Todos los derechos reservados.</p>
+  </footer>
+
+  <script>
+    async function cargarAnimales() {
+      try {
+        const res = await fetch('http://localhost:3000/admin/adopciones');
+        const animales = await res.json();
+        const contenedor = document.getElementById('galeriaAdopciones');
+        contenedor.innerHTML = '';
+
+        if (animales.length === 0) {
+          contenedor.innerHTML = '<p>No hay animales publicados aún.</p>';
+          return;
+        }
+
+        animales.forEach(a => {
+          const card = document.createElement('div');
+          card.className = 'animal-card';
+          card.innerHTML = `
+            <img src="http://localhost:3000/images/${a.imagen}" alt="Foto de ${a.nombre}" class="animal-img" onerror="this.src='images/default.jpg'" />
+            <h4>${a.nombre}</h4>
+            <p>${a.descripcion}</p>
+          `;
+          contenedor.appendChild(card);
+        });
+      } catch (error) {
+        console.error('❌ Error al cargar animales:', error);
+        document.getElementById('galeriaAdopciones').innerHTML = '<p>Error al cargar animales. Intenta más tarde.</p>';
+      }
+    }
+
+    cargarAnimales();
+  </script>
+</body>
+</html>

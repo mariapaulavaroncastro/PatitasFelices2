@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="icon" type="image/jpeg" href="../images/logo.jpg">
+  <title>Donaciones</title>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="../images/logo.jpg" alt="Logo Patitas Felices" class="logo">
+    </div>
+    <h1>Donaciones</h1>
+
+    <nav>
+      <ul>
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="../secciones/adopcion.html">Adopción</a></li>
+        <li><a href="../secciones/voluntariado.html">Voluntariado</a></li>
+        <li><a href="../secciones/noticias.html">Noticias</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h3>Tus aportes nos ayudan a rescatar, alimentar y dar cuidados médicos a más animales.</h3>
+    </section>
+
+    <!-- 🧾 Formulario de donación -->
+    <section class="formulario-donacion">
+  <h2>Realiza tu donación</h2>
+  <form id="formDonacion">
+    <label>Nombre completo:</label><br>
+    <input type="text" name="nombre" required><br><br>
+
+    <label>Teléfono (formato internacional):</label><br>
+    <input type="text" name="telefono" placeholder="+573001234567" required><br><br>
+
+    <label>Monto a donar (COP):</label><br>
+    <input type="number" name="monto" min="1000" required><br><br>
+
+    <label>Medio de pago:</label><br>
+    <select name="medio" required>
+      <option value="">-- Selecciona un medio --</option>
+      <option value="Nequi">💜 Nequi</option>
+      <option value="Bancolombia">💛 Bancolombia</option>
+    </select><br><br>
+
+    <label>Mensaje adicional (opcional):</label><br>
+    <textarea name="mensaje" rows="3"></textarea><br><br>
+
+    <button type="submit">Donar</button>
+  </form>
+</section>
+   
+  </main>
+
+  <footer>
+    <p>© 2025 Patitas Felices. Todos los derechos reservados.</p>
+  </footer>
+
+  <!--  Script para enviar datos al backend -->
+  <script>
+    document.getElementById('formDonacion').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const datos = Object.fromEntries(new FormData(e.target));
+      try {
+        const respuesta = await fetch('http://localhost:3000/donaciones', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+
+        const resultado = await respuesta.json();
+        alert(resultado.mensaje || 'Donación registrada');
+
+        e.target.reset(); // ✅ Limpia el formulario después de enviar
+      } catch (error) {
+        alert('Error al enviar la donación');
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>

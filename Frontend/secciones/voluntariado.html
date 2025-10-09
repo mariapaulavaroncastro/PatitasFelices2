@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="icon" type="image/jpeg" href="../images/logo.jpg">
+  <title>Voluntariado</title>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="../images/logo.jpg" alt="Logo Patitas Felices" class="logo">
+    </div>
+    <h1>Voluntariado</h1>
+    <nav>
+      <ul>
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="../secciones/adopcion.html">Adopción</a></li>
+        <li><a href="../secciones/donacion.html">Donación</a></li>
+        <li><a href="../secciones/noticias.html">Noticias</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h3>Únete como voluntario y sé parte del cambio. Tu tiempo puede salvar vidas.</h3>
+    </section>
+
+    <section class="formulario-voluntariado">
+      <h2>Formulario de Voluntariado</h2>
+      <form id="formVoluntariado">
+        <label>Nombre completo:</label>
+        <input type="text" name="nombre" required><br>
+
+        <label>Teléfono (WhatsApp):</label>
+        <input type="text" name="telefono" placeholder="+573001234567" required><br>
+
+        <label>Correo electrónico:</label>
+        <input type="email" name="correo" required><br>
+
+        <label>Disponibilidad horaria:</label>
+        <input type="text" name="horario" placeholder="Ej: fines de semana, tardes" required><br>
+
+        <label>Mensaje adicional (opcional):</label>
+        <textarea name="mensaje" rows="3"></textarea><br>
+
+        <button type="submit">Enviar solicitud</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Patitas Felices. Todos los derechos reservados.</p>
+  </footer>
+
+  <script>
+    document.getElementById('formVoluntariado').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const datos = Object.fromEntries(new FormData(e.target));
+
+      try {
+        const res = await fetch('http://localhost:3000/voluntariado', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+        const resultado = await res.json();
+        alert(resultado.mensaje || 'Solicitud enviada');
+        e.target.reset();
+      } catch (error) {
+        alert('Error al enviar solicitud');
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>

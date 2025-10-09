@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../styles.css" />
+  <title>Gestión de Adopciones</title>
+</head>
+<body>
+  <header>
+    <h1>🐶 Panel de Adopciones</h1>
+  </header>
+
+  <main class="formulario">
+    <h2>Publicar nuevo animal</h2>
+    <form id="formAdopcion" enctype="multipart/form-data">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" placeholder="Ej. Max" required title="Nombre del animal" />
+
+      <label for="edad">Edad:</label>
+      <input type="text" id="edad" name="edad" placeholder="Ej. 2 años" required title="Edad del animal" />
+
+      <label for="descripcion">Descripción:</label>
+      <textarea id="descripcion" name="descripcion" placeholder="Describe al animal" required title="Descripción del animal"></textarea>
+
+      <label for="imagen">Imagen:</label>
+      <input type="file" id="imagen" name="imagen" accept="image/*" required title="Sube una imagen del animal" />
+
+      <label for="categoria">Categoría:</label>
+      <select id="categoria" name="categoria" required title="Selecciona la especie del animal">
+        <option value="">Selecciona una categoría</option>
+        <option value="Perro">Perro</option>
+        <option value="Gato">Gato</option>
+        <option value="Conejo">Conejo</option>
+        <option value="Loro">Loro</option>
+      </select>
+
+      <button type="submit">Publicar</button>
+    </form>
+
+    <h2>Animales publicados</h2>
+    <section id="listaAdopciones"></section>
+
+    <div id="formEditarAdopcion" class="oculto">
+      <h3>Editar animal</h3>
+      <form id="editarAdopcion" enctype="multipart/form-data">
+        <input type="hidden" name="id_adopcion" />
+
+        <label for="editarNombre">Nombre:</label>
+        <input type="text" id="editarNombre" name="nombre" required title="Nombre del animal" />
+
+        <label for="editarEdad">Edad:</label>
+        <input type="text" id="editarEdad" name="edad" required title="Edad del animal" />
+
+        <label for="editarDescripcion">Descripción:</label>
+        <textarea id="editarDescripcion" name="descripcion" required title="Descripción del animal"></textarea>
+
+        <label for="editarImagen">Imagen (opcional):</label>
+        <input type="file" id="editarImagen" name="imagen" accept="image/*" title="Sube una nueva imagen si deseas cambiarla" />
+
+        <button type="submit">Actualizar</button>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    if (!localStorage.getItem('adminId')) {
+      window.location.href = 'login.html';
+    }
+
+    const adminId = localStorage.getItem('adminId');
+    let animales = [];
+
+    document.getElementById('formAdopcion').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const datos = new FormData(form);
+      datos.append('id_admin', adminId);
+
+      await fetch('http://localhost:3000/admin/adopciones', {
+        method: 'POST',
+        body: datos
+      });
+
+      form.reset();
+      cargarAdopciones();
+    });
+
+    async function cargarAdopciones() {
+      const res = await fetch('http://localhost:3000/admin/adopciones');
+      animales = await res.json();
+      const contenedor = document.getElementById('listaAdopciones');
+      contenedor.innerHTML = '';
+
+      animales.forEach(a => {
+        const bloque = document.createElement('article');
+        bloque.innerHTML = `
+          <h4>${a.nombre} (${a.edad})</h4>
+          <p>${a.descripcion}</p>
+          <img src="http://localhost:3000/images/${a.imagen}" alt="Foto de ${a.nombre}" style="max-width:200px;" onerror="this.src='../images/default.jpg'" />
+          <button onclick="eliminarAdopcion(${a.id_adopcion})">Eliminar</button>
+          <button onclick="mostrarFormularioEdicion(${a.id_adopcion})">Editar</button>
+        `;
+        contenedor.appendChild(bloque);
+      });
+    }
+
+    async function eliminarAdopcion(id) {
+      await fetch(`http://localhost:3000/admin/adopciones/${id}`, { method: 'DELETE' });
+      cargarAdopciones();
+    }
+
+    function mostrarFormularioEdicion(id) {
+      const animal = animales.find(a => a.id_adopcion === id);
+      const form = document.getElementById('editarAdopcion');
+      form.nombre.value = animal.nombre;
+      form.edad.value = animal.edad;
+      form.descripcion.value = animal.descripcion;
+      form.id_adopcion.value = id;
+      document.getElementById('formEditarAdopcion').classList.remove('oculto');
+    }
+
+    document.getElementById('editarAdopcion').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const datos = new FormData(form);
+
+      await fetch(`http://localhost:3000/admin/adopciones/${form.id_adopcion.value}`, {
+        method: 'PUT',
+        body: datos
+      });
+
+      document.getElementById('formEditarAdopcion').classList.add('oculto');
+      form.reset();
+      cargarAdopciones();
+    });
+
+    cargarAdopciones();
+  </script>
+</body>
+</html>

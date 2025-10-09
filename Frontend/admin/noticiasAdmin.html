@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../styles.css" />
+  <title>Gestión de Noticias</title>
+</head>
+<body>
+  <header>
+    <h1>📰 Panel de Noticias</h1>
+  </header>
+
+  <main class="formulario">
+    <h2>Publicar nueva noticia</h2>
+    <form id="formNoticia" enctype="multipart/form-data">
+      <label>Título:</label>
+      <input type="text" name="titulo" required />
+      <label>Contenido:</label>
+      <textarea name="contenido" rows="5" required></textarea>
+      <label>Imagen:</label>
+      <input type="file" name="imagen" accept="image/*" required />
+      <button type="submit">Publicar</button>
+    </form>
+
+    <h2>Noticias publicadas</h2>
+    <section id="listaNoticias"></section>
+
+    <div id="formEditarNoticia" class="oculto">
+      <h3>Editar noticia</h3>
+      <form id="editarNoticia" enctype="multipart/form-data">
+        <input type="hidden" name="id_noticia" />
+        <label>Título:</label>
+        <input type="text" name="titulo" required />
+        <label>Contenido:</label>
+        <textarea name="contenido" rows="5" required></textarea>
+        <label>Imagen (opcional):</label>
+        <input type="file" name="imagen" accept="image/*" />
+        <button type="submit">Actualizar</button>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    if (!localStorage.getItem('adminId')) {
+      window.location.href = 'login.html';
+    }
+
+    const adminId = localStorage.getItem('adminId');
+    let noticias = [];
+
+    document.getElementById('formNoticia').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const datos = new FormData(form);
+      datos.append('id_admin', adminId);
+
+      await fetch('http://localhost:3000/admin/noticias', {
+        method: 'POST',
+        body: datos
+      });
+
+      form.reset();
+      cargarNoticias();
+    });
+
+    async function cargarNoticias() {
+      const res = await fetch('http://localhost:3000/admin/noticias');
+      noticias = await res.json();
+      const contenedor = document.getElementById('listaNoticias');
+      contenedor.innerHTML = '';
+
+      noticias.forEach(n => {
+        const bloque = document.createElement('article');
+        bloque.innerHTML = `
+          <h4>${n.titulo}</h4>
+          <p>${n.contenido}</p>
+          <img src="http://localhost:3000/images/${n.imagen}" style="max-width:200px;" />
+          <span class="fecha">${new Date(n.fecha_publicacion).toLocaleDateString()}</span>
+          <button onclick="eliminarNoticia(${n.id_noticia})">Eliminar</button>
+          <button onclick="mostrarFormularioEdicion(${n.id_noticia})">Editar</button>
+        `;
+        contenedor.appendChild(bloque);
+      });
+    }
+
+    async function eliminarNoticia(id) {
+  await fetch(`http://localhost:3000/admin/noticias/${id}`, {
+    method: 'DELETE'
+  });
+  cargarNoticias();
+}
+
+    function mostrarFormularioEdicion(id) {
+      const noticia = noticias.find(n => n.id_noticia === id);
+      const form = document.getElementById('editarNoticia');
+      form.titulo.value = noticia.titulo;
+      form.contenido.value = noticia.contenido;
+      form.id_noticia.value = id;
+      document.getElementById('formEditarNoticia').classList.remove('oculto');
+    }
+
+    document.getElementById('editarNoticia').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const datos = new FormData(form);
+
+      await fetch(`http://localhost:3000/admin/noticias/${form.id_noticia.value}`, {
+        method: 'PUT',
+        body: datos
+      });
+
+      document.getElementById('formEditarNoticia').classList.add('oculto');
+      form.reset();
+      cargarNoticias();
+    });
+
+    cargarNoticias();
+  </script>
+</body>
+</html>
