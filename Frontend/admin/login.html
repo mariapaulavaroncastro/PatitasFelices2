@@ -8,12 +8,21 @@
 <body>
   <main class="formulario">
     <h2>Acceso Administrador</h2>
-    <form id="formLogin">
-      <label>Correo:</label> <!-- ✅ Cambiado de "Usuario" a "Correo" -->
-      <input type="text" name="correo" required />
-      <label>Contraseña:</label>
-      <input type="password" name="contrasena" required />
-      <button type="submit">Ingresar</button>
+
+    <!-- ✅ Se agregó class="form" para que tome los estilos -->
+    <form id="formLogin" class="form">
+      <div class="Group">
+        <label>Correo:</label>
+        <input type="text" name="correo" required />
+      </div>
+
+      <div class="Group">
+        <label>Contraseña:</label>
+        <input type="password" name="contrasena" required />
+      </div>
+
+      <!-- ✅ Se agregó class="btn" para el estilo del botón -->
+      <button type="submit" class="btn">Ingresar</button>
     </form>
   </main>
 
@@ -24,7 +33,9 @@
 
       const res = await fetch('http://localhost:3000/admin/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(datos)
       });
 
