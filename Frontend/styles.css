@@ -359,3 +359,22 @@ h2 {
   font-family: sans-serif;
   margin-bottom: 1em;
 }
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: Arial, sans-serif;
+
+  /* Fondo */
+  background-image: url("images/patitas.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-color: #000; /* respaldo */
+}
+.formulario h2 {
+  color: #000;
+  text-align: center;
+}
