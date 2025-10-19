@@ -1,10 +1,10 @@
 const pool = require('../base-datos/conexionSQL');
 
 const loginAdmin = async (req, res) => {
-  const { correo, contrasena } = req.body; // ✅ Esta línea es obligatoria
+  const { correo, contrasena } = req.body; 
 
   const resultado = await pool.request()
-   .input('correo', correo) // el campo del formulario se llama "usuario", pero en la BD es "correo"
+   .input('correo', correo) 
 .input('contrasena', contrasena)
 .query(`
   SELECT id_admin FROM administradores

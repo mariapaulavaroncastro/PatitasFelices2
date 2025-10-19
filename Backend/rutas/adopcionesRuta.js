@@ -1,7 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const controlador = require('../controladores/adopcionesControlador');
+const { listarAdopcionesPublico, registrarSolicitud } = require('../controladores/adopcionesControlador');
 
-router.post('/adopcion', controlador.registrarSolicitud);
+// GET /adopciones - Para listar todos los animales
+router.get('/', listarAdopcionesPublico);
+
+// POST /adopciones/solicitud - Para enviar un formulario de solicitud
+router.post('/solicitud', registrarSolicitud);
 
 module.exports = router;

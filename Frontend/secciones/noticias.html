@@ -106,7 +106,7 @@
       lista.innerHTML = '';
       comentarios.forEach(c => {
         const li = document.createElement('li');
-        li.textContent = c.texto;
+        li.innerHTML = `<strong>${c.nombre}:</strong> ${c.contenido}`;
         lista.appendChild(li);
       });
     }

@@ -1,7 +1,7 @@
 const pool = require('../base-datos/conexionSQL');
 
 const loginAdmin = async (req, res) => {
-  const { correo, contrasena } = req.body; // ✅ Esta línea es obligatoria
+  const { correo, contrasena } = req.body; 
 
   try {
     const resultado = await pool.request()

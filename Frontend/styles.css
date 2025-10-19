@@ -1,4 +1,9 @@
-/* Estilos generales */
+/* Importar fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&family=Quicksand:wght@400;600&display=swap');
+
+
+/* Reset y base */
+
 * {
   margin: 0;
   padding: 0;
@@ -6,21 +11,26 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
+ font-family: 'Quicksand', 'Nunito', sans-serif;
+  background-color: transparent;
+  color: #193f1b;
   line-height: 1.6;
-  background-color: #fef9f9;
-  color: #333;
+  
   padding: 0 20px;
 }
 
+/* Header */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ffe5ec;
+  background-color: rgba(255, 255, 255, 0.145);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
   padding: 15px 20px;
-  border-radius: 8px;
+  border-radius: 12px;
   margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .logo-container {
@@ -29,12 +39,13 @@ header {
 }
 
 .logo {
-  height: 60px;
-  width: 60px;
+  height: 90px;
+  width: 90px;
   margin-right: 10px;
   object-fit: cover;
 }
 
+/* Navegación */
 nav ul {
   list-style: none;
   display: flex;
@@ -43,7 +54,7 @@ nav ul {
 
 nav ul li a {
   text-decoration: none;
-  color: #7d5a5a;
+  color: #193f1b;
   font-weight: bold;
   transition: color 0.3s ease;
 }
@@ -52,52 +63,59 @@ nav ul li a:hover {
   color: #ff6f91;
 }
 
+/* Main */
 main section {
-  background: #fff0f6;
+main section {
+  background-color: transparent;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
   padding: 20px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
-}
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}}
 
 main h2, main h3 {
-  color: #7d5a5a;
+  color: #193f1b;
+  text-align: center;
 }
 
+/* Footer */
 footer {
   text-align: center;
-  margin-top: 20px;
-  padding: 10px;
-  background-color: #ffe5ec;
-  border-radius: 8px;
-  color: #7d5a5a;
+  margin-top: 30px;
+  background-color: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  border-radius: 12px;
+  color: #193f1b;
 }
 
-.muestra-intro,
-.muestra {
-  text-align: center;
-  margin: auto;
-}
-
+/* Galería */
 .galeria {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 30px;
   margin: 30px auto;
-  width: 100%;
+
   max-width: 1200px;
   justify-items: center;
 }
 
 
 .animal-card {
-  background: #fff;
+  background-color: rgba(255, 255, 255, 0.584);
   border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
-  padding: 24px 12px 20px 12px;
-  max-width: 200px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  padding: 24px 12px;
+  max-width: 220px;
   width: 100%;
   text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.animal-card:hover {
+  transform: scale(1.03);
 }
 
 .animal-img {
@@ -108,13 +126,180 @@ footer {
   margin-bottom: 10px;
 }
 
+/* Títulos */
 h1 {
+  font-family: 'Dancing Script', cursive;
   font-size: 2.8rem;
-  color: #7d5a5a;
+  color: #193f1b;
   text-align: center;
 }
 
-/* Responsive: tablets */
+/* Filtros */
+.filtros {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.btn-filtro,
+.filter-btn {
+  background-color: #ffb6c1;
+  border: none;
+  padding: 10px 18px;
+  margin: 5px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  color: #193f1b;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.btn-filtro:hover,
+.filter-btn:hover {
+  background-color: #ff6f91;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* Formularios públicos: adopción, voluntariado, donación */
+form:not(.form) {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 25px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: 'Quicksand', 'Nunito', sans-serif;
+  color: #193f1b;
+}
+
+form:not(.form) h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  color: #d11252;
+}
+
+form:not(.form) input,
+form:not(.form) select,
+form:not(.form) textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 18px;
+  border: 2px solid #ffb6c1;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #fff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+form:not(.form) input:focus,
+form:not(.form) select:focus,
+form:not(.form) textarea:focus {
+  outline: none;
+  border-color: #ff6f91;
+  box-shadow: 0 0 8px rgba(255,111,145,0.3);
+}
+
+form:not(.form) button,
+form:not(.form) .btn {
+  background: linear-gradient(to right, #ff6f91, #d11252);
+  color: #fff;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+form:not(.form) button:hover,
+form:not(.form) .btn:hover {
+  background-color: #c10e4d;
+  transform: scale(1.03);
+}
+
+/* Imagen noticia */
+.imagen-noticia {
+  max-width: 100%;
+  width: 300px;
+  height: auto;
+  border-radius: 8px;
+  margin: 10px 0;
+  object-fit: cover;
+}
+
+/* Login (administrador) */
+form.form {
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+  height: auto;
+  background-color: #fff;
+  margin: 0 auto;
+  box-shadow: 0 0 25px rgba(33,113,147,0.2);
+  padding: 2em;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.form .Group {
+  margin-bottom: 1.5em;
+}
+
+.form label {
+  margin-bottom: 10px;
+  display: block;
+  font-size: 1.1em;
+  color: #217093;
+  font-weight: bold;
+}
+
+.form input {
+  padding: 10px;
+  background-color: #f3fafd;
+  border: 2px solid #217093;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: box-shadow 0.2s ease, border-color 0.3s ease;
+}
+
+.form input:focus {
+  outline: none;
+  background-color: #edf8fc;
+  border-color: #4eb8dd;
+  box-shadow: 0 0 8px rgba(78,184,221,0.3);
+}
+
+.form input::placeholder {
+  color: #21719383;
+}
+
+.form .btn {
+  padding: 12px;
+  background-color: #d11252;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  color: #fff;
+  font-weight: bold;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.form .btn:hover {
+  background-color: #14678d;
+  cursor: pointer;
+}
+
+.form .btn:active {
+  transform: scale(0.98);
+}
+
+/* Responsive tablets */
 @media (max-width: 900px) {
   header {
     flex-direction: column;
@@ -136,19 +321,19 @@ h1 {
 
   .galeria {
     grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
+
   }
 }
 
-/* Responsive: móviles */
+
+/* Responsive móviles */
 @media (max-width: 600px) {
   body {
-    padding: 0 5px;
-    background-color: lightblue; /* Prueba visual */
+    padding: 0 10px;
   }
 
   header {
-    padding: 10px 5px;
+    padding: 10px;
   }
 
   .logo {
@@ -157,207 +342,37 @@ h1 {
   }
 
   h1 {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
   }
 
   main section {
-    padding: 10px;
-    margin-bottom: 10px;
+    padding: 15px;
   }
 
   nav ul {
     font-size: 1rem;
-  }
-
-  .boton-adoptar {
-    width: 100%;
-    font-size: 1rem;
-  }
-
-  .galeria {
-    grid-template-columns: repeat(1, 1fr);
-    gap: 20px;
-    justify-items: center;
-  }
-
-  .animal-img {
-    width: 100%;
-    height: auto;
-  }
+  } 
 }
-.filtros {
-  margin: 20px 0;
-  text-align: center;
-}
-
-.btn-filtro {
-  background: #ffb6c1;
-  border: none;
-  padding: 10px 15px;
-  margin: 5px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.btn-filtro:hover {
-  background: #ff6f91;
-  color: white;
-}
-.filter-btn {
-  background-color: #ffb6c1;   /* Rosa claro, igual al esquema */
-  border: none;
-  padding: 10px 18px;
-  margin: 5px;
-  border-radius: 8px;
-  font-weight: bold;
-  font-family: Arial, sans-serif; /* Igual que body */
-  font-size: 1rem;
-  color: #7d5a5a;  /* Mismo tono del texto principal */
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* como las tarjetas */
-}
-
-.filter-btn:hover {
-  background-color: #ff6f91; /* rosa más fuerte al pasar */
-  color: #fff;
-  transform: scale(1.05); /* pequeño efecto al pasar */
-}
-
-.formulario-donacion {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 20px;
-  background-color: #fefefe;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.formulario-donacion h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.formulario-donacion input,
-.formulario-donacion select,
-.formulario-donacion textarea {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-.imagen-noticia {
-  max-width: 100%;
-  width: 300px;
-  height: auto;
-  border-radius: 8px;
-  margin: 10px 0;
-  object-fit: cover;
-}
-/* DE AQUI ABAJO TODO LO QUE SEA ESTILO DEL LOGIN CACHEM QUE ERA PORQUE NO PUSE COMENTARIOS JAJAJA*/
-form {
-  display: flex;
-  flex-direction: column;
-  width: 280px;
-  height: 350px;
-  background-color: #FFF;
-  margin: 0;
-  box-shadow: -1px 0px 25px 0px #21719369;
-  padding: 2.25em;
-  box-sizing: border-box;
-  border: solid 1px #DDD;
-  border-radius: 0.5em;
-  font-family: sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-}
-
-
-.form .Group {
-  margin-bottom: 2em;
-}
-
-
-.form label {
-  margin: 0 0 10px;
+.admin-btn {
   display: block;
-  font-size: 1.25em;
-  color: #217093;
-  font-weight: 600;
-  font-family: inherit;
+  background-color: #ffb6c1;
+  color: #7d5a5a;
+  font-weight: bold;
+  padding: 12px 20px;
+  margin: 10px auto;
+  border-radius: 8px;
+  
+  text-align: center;
+  text-decoration: none;
+  width: 80%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-
-.form input {
-  padding: 0.3em 0.5em 0.4em;
-  background-color: #f3fafd;
-  border: solid 2px #217093;
-  border-radius: 4px;
-  box-sizing: border-box;
-  width: 100%;
-  height: 50px;
-  font-size: 1.3em;
-  color: #353538;
-  font-weight: 600;
-  font-family: inherit;
-  transition: box-shadow 0.2s linear, border-color 0.25s ease-out;
-}
-
-.form input:focus {
-  outline: none;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-  background-color: #edf8fc;
-  border: solid 2px #4eb8dd;
-}
-
-.form input::placeholder {
-  color: #21719383;
-}
-
-/* BOTÓN  */
-.form .btn {
-  margin: 0;
-  padding: 0.5em;
-  background-color: #d11252;
-  border: none;
-  border-radius: 4px;
-  box-sizing: border-box;
-  width: 100%;
-  height: 50px;
-  font-size: 1.4em;
-  color: #FFF;
-  font-weight: 600;
-  font-family: inherit;
-  transition: transform 0.1s ease-in-out, background-color 0.2s ease-out;
-}
-
-.form .btn:hover {
-  cursor: pointer;
-  background-color: #14678d;
-}
-
-.form .btn:active {
-  transform: scale(0.98);
-}
-
-
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f3fafd;
-  margin: 0;
-  flex-direction: column;
-}
-
-h2 {
-  color: #217093;
-  font-family: sans-serif;
-  margin-bottom: 1em;
+.admin-btn:hover {
+  background-color: #ff6f91;
+  color: white;
+  transform: scale(1.03);
 }
 html, body {
   margin: 0;
@@ -367,9 +382,10 @@ html, body {
   font-family: Arial, sans-serif;
 
   /* Fondo */
-  background-image: url("images/patitas.png");
-  background-size: cover;
-  background-repeat: no-repeat;
+ 
+  background-image: url('images/fondopatitas.png');
+  background-repeat: repeat;
+  background-size: auto;
   background-position: center;
   background-attachment: fixed;
   background-color: #000; /* respaldo */
@@ -377,4 +393,238 @@ html, body {
 .formulario h2 {
   color: #000;
   text-align: center;
+}
+/* Panel de bienvenida con transición */
+.hero-slider-doble {
+  position: relative;
+  height: 42vh;
+  overflow: hidden;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  background-color: transparent;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.hero-slider-doble {
+  height: 60vh; 
+  padding: 20px 0;
+}
+
+.slide-doble {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.slide-doble.active {
+  opacity: 1;
+}
+
+.slide-doble img {
+  width: 48%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.hero-text-doble {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background-color: rgba(255, 255, 255, 0.145);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  padding: 14px 22px;
+  border-radius: 10px;
+  color: #193f1b;
+  font-size: 1.5rem;
+  font-weight: bold; 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+/*mision*/
+.nuestra-mision {
+  background-color: rgba(255, 255, 255, 0.145);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  padding: 50px 20px;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0);
+  margin-bottom: 40px;
+}
+
+.nuestra-mision h2 {
+  font-size: 2.2rem;
+  color: #193f1b;
+  margin-bottom: 40px;
+}
+
+.mision-contenido {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+}
+
+.mision-bloque {
+  background-color: rgba(255, 255, 255, 0.145);
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 500px;
+  flex: 1 1 400px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.519);
+  text-align: left;
+}
+
+.mision-bloque h3 {
+  font-size: 1.4rem;
+  color: #d11252;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+.mision-bloque p {
+  font-size: 1.05rem;
+  color: #4a3b3b;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.boton-mision {
+  display: inline-block;
+  padding: 12px 24px;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 8px;
+  color: #fff;
+  text-transform: uppercase;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.boton-mision.ayuda {
+  background-color: #ff6f91;
+}
+
+.boton-mision.voluntario {
+  background-color: #8bc34a;
+}
+
+.boton-mision:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+.participa {
+  background-color: rgba(255, 255, 255, 0.145);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  padding: 60px 20px;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0);
+  margin-bottom: 40px;
+}
+
+.participa h2 {
+  font-size: 2rem;
+  color: #193f1b;
+  margin-bottom: 40px;
+}
+
+.bloques-participa {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 30px;
+}
+
+.bloque {
+   background-color: #ffffff59;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.bloque img {
+  width: 60px;
+  margin-bottom: 15px;
+}
+
+.bloque h3 {
+  font-size: 1.3rem;
+  color: #d11252;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.bloque p {
+  font-size: 1rem;
+  color: #193f1b;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.boton-participa {
+  display: inline-block;
+  background-color: #ff6f91;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.boton-participa:hover {
+  background-color: #ff4f7a;
+  transform: scale(1.05);
+}
+/* Panel emocional adopción */
+.panel-emocional {
+  position: relative;
+  margin-bottom: 30px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.panel-emocional img {
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.panel-texto {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background-color: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  padding: 14px 20px;
+  border-radius: 10px;
+  color: #2e7d32;
+  font-size: 1.3rem;
+  font-weight: bold;
+  max-width: 80%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.adopcion-panel img {
+  height: 500px;
+}
+
+.donacion-panel img {
+  height: 500px;
+  object-position: top;
+}
+
+.voluntariado-panel img {
+  height: 500px;
+  object-position: center;
 }

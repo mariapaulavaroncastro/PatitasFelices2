@@ -25,9 +25,16 @@
   </header>
 
   <main>
-    <section class="intro">
-      <h3>Conoce a nuestros amigos peludos que esperan una familia amorosa.</h3>
-    </section>
+
+ <div class="panel-emocional adopcion-panel">
+  <img src="../images/adopcion.jpg" alt="Mascotas esperando adopción" class="panel-imagen">
+  <div class="panel-texto">
+    Conoce a nuestros amigos peludos que esperan una familia amorosa.
+  </div>
+</div>
+
+
+    
 
     <!-- Botones de filtro -->
     <section class="filtros">
@@ -79,7 +86,7 @@
 
     async function cargarAdopciones() {
       try {
-        const res = await fetch('http://localhost:3000/admin/adopciones');
+        const res = await fetch('http://localhost:3000/adopciones');
         animales = await res.json();
         mostrarAnimales(animales);
         llenarSelector(animales);
@@ -103,7 +110,7 @@
         card.className = 'animal-card';
         card.setAttribute('data-animal', a.categoria);
         card.innerHTML = `
-          <img src="http://localhost:3000/images/${a.imagen}" alt="Foto de ${a.nombre}" class="animal-img" onerror="this.src='../images/default.jpg'" />
+         <img src="http://localhost:3000/images/${a.imagen}" alt="Foto de ${a.nombre}" class="animal-img" onerror="this.src='../images/default.jpg'" />
           <h4>${a.nombre}</h4>
           <p>${a.descripcion}</p>
         `;
@@ -116,7 +123,7 @@
       selector.innerHTML = '<option value="">-- Selecciona una mascota --</option>';
       lista.forEach(a => {
         const option = document.createElement('option');
-        option.value = a.nombre;
+        option.value = a.nombre; // Usamos el nombre como valor
         option.textContent = a.nombre;
         selector.appendChild(option);
       });
@@ -138,7 +145,7 @@
       e.preventDefault();
       const datos = Object.fromEntries(new FormData(e.target));
       try {
-        const respuesta = await fetch('http://localhost:3000/adopcion', {
+        const respuesta = await fetch('http://localhost:3000/adopciones/solicitud', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(datos)

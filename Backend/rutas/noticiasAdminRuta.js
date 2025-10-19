@@ -8,9 +8,10 @@ const {
   actualizarNoticia
 } = require('../controladores/noticiasAdminControlador');
 
-router.post('/admin/noticias', upload.single('imagen'), publicarNoticiaConImagen);
-router.get('/admin/noticias', listarNoticias);
-router.delete('/admin/noticias/:id', eliminarNoticia);
-router.put('/admin/noticias/:id', upload.single('imagen'), actualizarNoticia);
+router.get('/', listarNoticias);
+router.post('/', upload.single('imagen'), publicarNoticiaConImagen);
+router.put('/:id', upload.single('imagen'), actualizarNoticia);
+router.delete('/:id', eliminarNoticia);
+
 
 module.exports = router;

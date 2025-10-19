@@ -1,8 +1,22 @@
 const pool = require('../base-datos/conexionSQL');
 const enviarWhatsApp = require('../servicios/whatsapp');
 
+const listarAdopcionesPublico = async (req, res) => {
+  try {
+    const resultado = await pool.request().query(`
+      SELECT id_adopcion, nombre, edad, descripcion, imagen, categoria 
+      FROM adopciones 
+      ORDER BY nombre
+    `);
+    res.json(resultado.recordset);
+  } catch (error) {
+    console.error('❌ Error al listar adopciones públicas:', error);
+    res.status(500).json({ mensaje: 'Error interno al obtener las adopciones.' });
+  }
+};
+
 const registrarSolicitud = async (req, res) => {
-  const { nombre, telefono, correo, mascota, mensaje } = req.body;
+  const { nombre, telefono, correo, mascota, mensaje } = req.body; // Esperamos 'mascota' (el nombre)
 
   try {
     // Validación básica
@@ -15,11 +29,11 @@ const registrarSolicitud = async (req, res) => {
       .input('nombre', nombre)
       .input('telefono', telefono)
       .input('correo', correo)
-      .input('mascota', mascota)
+      .input('mascota', mascota) // Guardamos el nombre de la mascota
       .input('mensaje', mensaje || '') // Evita null
       .query(`
-        INSERT INTO adopciones (nombre, telefono, correo, mascota, mensaje)
-        VALUES (@nombre, @telefono, @correo, @mascota, @mensaje)
+        INSERT INTO solicitudes_adopcion (nombre, telefono, correo, mascota, mensaje)
+        VALUES (@nombre, @telefono, @correo, @mascota, @mensaje);
       `);
 
     // Mensaje por WhatsApp
@@ -34,4 +48,7 @@ const registrarSolicitud = async (req, res) => {
   }
 };
 
-module.exports = { registrarSolicitud };
+module.exports = { 
+  registrarSolicitud,
+  listarAdopcionesPublico 
+};

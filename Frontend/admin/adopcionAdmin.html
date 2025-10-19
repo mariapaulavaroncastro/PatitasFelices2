@@ -47,16 +47,24 @@
         <input type="hidden" name="id_adopcion" />
 
         <label for="editarNombre">Nombre:</label>
-        <input type="text" id="editarNombre" name="nombre" required title="Nombre del animal" />
+        <input type="text" id="editarNombre" name="nombre" required title="Nuevo nombre del animal" />
 
         <label for="editarEdad">Edad:</label>
-        <input type="text" id="editarEdad" name="edad" required title="Edad del animal" />
+        <input type="text" id="editarEdad" name="edad" required title="Nueva edad del animal" />
 
         <label for="editarDescripcion">Descripción:</label>
         <textarea id="editarDescripcion" name="descripcion" required title="Descripción del animal"></textarea>
 
         <label for="editarImagen">Imagen (opcional):</label>
         <input type="file" id="editarImagen" name="imagen" accept="image/*" title="Sube una nueva imagen si deseas cambiarla" />
+
+        <label for="editarCategoria">Categoría:</label>
+        <select id="editarCategoria" name="categoria" required title="Selecciona la especie del animal">
+          <option value="Perro">Perro</option>
+          <option value="Gato">Gato</option>
+          <option value="Conejo">Conejo</option>
+          <option value="Loro">Loro</option>
+        </select>
 
         <button type="submit">Actualizar</button>
       </form>
@@ -113,9 +121,10 @@
     function mostrarFormularioEdicion(id) {
       const animal = animales.find(a => a.id_adopcion === id);
       const form = document.getElementById('editarAdopcion');
-      form.nombre.value = animal.nombre;
-      form.edad.value = animal.edad;
-      form.descripcion.value = animal.descripcion;
+      form.querySelector('#editarNombre').value = animal.nombre;
+      form.querySelector('#editarEdad').value = animal.edad;
+      form.querySelector('#editarDescripcion').value = animal.descripcion;
+      form.querySelector('#editarCategoria').value = animal.categoria;
       form.id_adopcion.value = id;
       document.getElementById('formEditarAdopcion').classList.remove('oculto');
     }

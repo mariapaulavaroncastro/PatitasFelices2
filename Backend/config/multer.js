@@ -3,10 +3,11 @@ const path = require('path');
 
 // Configuración del almacenamiento
 const storage = multer.diskStorage({
-  destination: path.join(__dirname, '../Frontend/images'),
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '..', '..', 'Frontend', 'images')); // ✅ Carpeta correcta
+  },
   filename: (req, file, cb) => {
-    const nombreUnico = Date.now() + path.extname(file.originalname);
-    cb(null, nombreUnico);
+    cb(null, file.originalname); // ✅ guarda el nombre original sin timestamp
   }
 });
 

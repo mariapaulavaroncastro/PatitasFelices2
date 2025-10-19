@@ -8,18 +8,18 @@
 </head>
 <body>
   <header>
-    <h1>📰 Panel de Noticias</h1>
+    <h1> Panel de Noticias</h1>
   </header>
 
   <main class="formulario">
     <h2>Publicar nueva noticia</h2>
     <form id="formNoticia" enctype="multipart/form-data">
       <label>Título:</label>
-      <input type="text" name="titulo" required />
+      <input type="text" name="titulo" required title="Título de la noticia" />
       <label>Contenido:</label>
-      <textarea name="contenido" rows="5" required></textarea>
+      <textarea name="contenido" rows="5" required title="Contenido de la noticia"></textarea>
       <label>Imagen:</label>
-      <input type="file" name="imagen" accept="image/*" required />
+      <input type="file" name="imagen" accept="image/*" required title="Imagen para la noticia" />
       <button type="submit">Publicar</button>
     </form>
 
@@ -31,11 +31,11 @@
       <form id="editarNoticia" enctype="multipart/form-data">
         <input type="hidden" name="id_noticia" />
         <label>Título:</label>
-        <input type="text" name="titulo" required />
+        <input type="text" name="titulo" required title="Nuevo título de la noticia" />
         <label>Contenido:</label>
-        <textarea name="contenido" rows="5" required></textarea>
+        <textarea name="contenido" rows="5" required title="Nuevo contenido de la noticia"></textarea>
         <label>Imagen (opcional):</label>
-        <input type="file" name="imagen" accept="image/*" />
+        <input type="file" name="imagen" accept="image/*" title="Nueva imagen para la noticia" />
         <button type="submit">Actualizar</button>
       </form>
     </div>
@@ -75,7 +75,7 @@
         bloque.innerHTML = `
           <h4>${n.titulo}</h4>
           <p>${n.contenido}</p>
-          <img src="http://localhost:3000/images/${n.imagen}" style="max-width:200px;" />
+          <img src="http://localhost:3000/images/${n.imagen}" alt="Imagen de la noticia" style="max-width:200px;" onerror="this.src='../images/default.jpg'" />
           <span class="fecha">${new Date(n.fecha_publicacion).toLocaleDateString()}</span>
           <button onclick="eliminarNoticia(${n.id_noticia})">Eliminar</button>
           <button onclick="mostrarFormularioEdicion(${n.id_noticia})">Editar</button>
