@@ -1,19 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const noticiasAdminCtrl = require('../controladores/noticiasAdminControlador');
 
-const {
-  listarNoticias,
-  registrarReaccion,
-  registrarComentario,
-  contarReacciones,
-  obtenerComentariosPorNoticia,
-} = require('../controladores/noticiasControlador');
+// Verificamos qué está llegando (opcional, para depurar)
+console.log("Funciones cargadas en el router:", Object.keys(noticiasAdminCtrl));
 
-// ✅ Estas rutas ya tienen el prefijo /noticias desde servidor.js
-router.get('/', listarNoticias);
-router.post('/:id/reaccionar', registrarReaccion);
-router.post('/:id/comentar', registrarComentario);
-router.get('/:id/comentarios', obtenerComentariosPorNoticia);
-router.get('/:id/reacciones', contarReacciones);
+// Rutas
+router.get('/', noticiasAdminCtrl.listarNoticias);
+router.post('/', noticiasAdminCtrl.publicarNoticiaConImagen);
+router.delete('/:id', noticiasAdminCtrl.eliminarNoticia);
+
+// LÍNEA 13: Aquí es donde fallaba. 
+// Asegúrate de que el nombre noticiasAdminCtrl.actualizarNoticia exista en el controlador.
+router.put('/:id', noticiasAdminCtrl.actualizarNoticia);
 
 module.exports = router;

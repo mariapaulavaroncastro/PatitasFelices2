@@ -5,7 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../styles.css">
   <link rel="icon" type="image/jpeg" href="../images/logo.jpg">
-  <title>Voluntariado</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <title>Voluntariado - Patitas Felices</title>
+  
+  <style>
+    /* Estilos para campos autocompletados */
+    .input-bloqueado { background-color: #f4f4f4; color: #777; cursor: not-allowed; }
+    .alerta-sesion {
+      background-color: #d1ecf1;
+      color: #0c5460;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      border: 1px solid #bee5eb;
+      display: none; /* Se activa con JS */
+      font-size: 0.9em;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -25,24 +41,28 @@
 
   <main>
     <div class="panel-emocional voluntariado-panel">
-  <img src="../images/voluntariado.jpg" alt="Voluntarios cuidando animales" class="panel-imagen">
-  <div class="panel-texto">
-    Únete como voluntario y sé parte del cambio. Tu tiempo puede salvar vidas.
-  </div>
-</div>
-
+      <img src="../images/voluntariado.jpg" alt="Voluntarios cuidando animales" class="panel-imagen">
+      <div class="panel-texto">
+        Únete como voluntario y sé parte del cambio. Tu tiempo puede salvar vidas.
+      </div>
+    </div>
 
     <section class="formulario-voluntariado">
       <h2>Formulario de Voluntariado</h2>
+
+      <div id="alertaSesion" class="alerta-sesion">
+        <i class="fas fa-user-check"></i> ¡Hola <strong id="nombreUsuario"></strong>! Hemos rellenado tus datos de contacto automáticamente.
+      </div>
+
       <form id="formVoluntariado">
         <label>Nombre completo:</label>
-        <input type="text" name="nombre" required><br>
+        <input type="text" name="nombre" id="vol-nombre" required><br>
 
         <label>Teléfono (WhatsApp):</label>
         <input type="text" name="telefono" placeholder="+573001234567" required><br>
 
         <label>Correo electrónico:</label>
-        <input type="email" name="correo" required><br>
+        <input type="email" name="correo" id="vol-correo" required><br>
 
         <label>Disponibilidad horaria:</label>
         <input type="text" name="horario" placeholder="Ej: fines de semana, tardes" required><br>
@@ -50,19 +70,57 @@
         <label>Mensaje adicional (opcional):</label>
         <textarea name="mensaje" rows="3"></textarea><br>
 
-        <button type="submit">Enviar solicitud</button>
+        <button type="submit" id="btnEnviar">Enviar solicitud</button>
       </form>
     </section>
   </main>
 
   <footer>
-    <p>© 2025 Patitas Felices. Todos los derechos reservados.</p>
+    <p>© 2026 Patitas Felices. Todos los derechos reservados.</p>
   </footer>
 
   <script>
+    // --- 1. FUNCIÓN DE AUTOCOMPLETADO ---
+    function cargarDatosUsuario() {
+      const usuarioData = localStorage.getItem('usuario');
+      
+      if (usuarioData) {
+        const usuario = JSON.parse(usuarioData);
+        
+        // Referencia a los inputs
+        const inputNombre = document.getElementById('vol-nombre');
+        const inputCorreo = document.getElementById('vol-correo');
+        const alerta = document.getElementById('alertaSesion');
+        const nombreEtiqueta = document.getElementById('nombreUsuario');
+
+        // Llenar datos
+        inputNombre.value = usuario.nombre;
+        inputCorreo.value = usuario.email;
+
+        // Bloquear inputs y dar estilo
+        inputNombre.readOnly = true;
+        inputCorreo.readOnly = true;
+        inputNombre.classList.add('input-bloqueado');
+        inputCorreo.classList.add('input-bloqueado');
+
+        // Mostrar alerta
+        nombreEtiqueta.textContent = usuario.nombre;
+        alerta.style.display = 'block';
+      }
+    }
+
+    // --- 2. LOGICA DE ENVÍO ---
     document.getElementById('formVoluntariado').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const datos = Object.fromEntries(new FormData(e.target));
+      
+      const btn = document.getElementById('btnEnviar');
+      const textoOriginal = btn.textContent;
+      
+      btn.disabled = true;
+      btn.textContent = "Enviando...";
+
+      const formData = new FormData(e.target);
+      const datos = Object.fromEntries(formData);
 
       try {
         const res = await fetch('http://localhost:3000/voluntariado', {
@@ -70,14 +128,27 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(datos)
         });
+        
         const resultado = await res.json();
-        alert(resultado.mensaje || 'Solicitud enviada');
-        e.target.reset();
+
+        if (res.ok) {
+          alert('✅ ' + (resultado.mensaje || 'Solicitud recibida. ¡Gracias por querer ayudar!'));
+          e.target.reset();
+          cargarDatosUsuario(); // Volvemos a llenar los datos protegidos
+        } else {
+          alert('⚠️ ' + (resultado.mensaje || 'Error al procesar la solicitud'));
+        }
       } catch (error) {
-        alert('Error al enviar solicitud');
+        alert('❌ Error al conectar con el servidor.');
         console.error(error);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = textoOriginal;
       }
     });
+
+    // --- 3. INICIO ---
+    window.onload = cargarDatosUsuario;
   </script>
 </body>
 </html>

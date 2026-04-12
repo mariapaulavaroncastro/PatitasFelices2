@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="login.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <title>Acceso - Patitas Felices</title>
+    <style>
+        .password-container { position: relative; width: 100%; }
+        #togglePassword {
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            cursor: pointer; color: #666; font-size: 1.2rem;
+        }
+        .req-info { font-size: 0.75rem; text-align: left; color: #666; margin-top: 5px; display: none; }
+        .req-item { margin: 2px 0; }
+        .valid { color: #28a745; }
+        .invalid { color: #dc3545; }
+        
+        /* Contenedor para el botón real de Google */
+        #google-btn-container {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="body-login">
+    <div class="login-container-box">
+        <img src="../images/logopatitas.png" alt="Logo" class="logo-login">
+        <h1 id="auth-title">Iniciar Sesión</h1>
+        
+        <form id="auth-form">
+            <div id="nombre-container" style="display: none;">
+                <input type="text" id="nombre" placeholder="Nombre completo">
+            </div>
+
+            <input type="email" id="email" placeholder="Correo" required>
+
+            <div class="password-container">
+                <input type="password" id="password" placeholder="Contraseña" required>
+                <span id="togglePassword">👁️</span>
+            </div>
+
+            <div id="password-requirements" class="req-info">
+                <p class="req-item" id="req-len">❌ Mínimo 8 caracteres</p>
+                <p class="req-item" id="req-cap">❌ Una mayúscula</p>
+                <p class="req-item" id="req-num">❌ Un número</p>
+            </div>
+
+            <div id="telefono-container" style="display: none;">
+                <input type="text" id="telefono" placeholder="Teléfono">
+            </div>
+
+            <button type="submit" class="btn-principal" id="btn-text">INGRESAR</button>
+        </form>
+
+        <div id="google-btn-container"></div>
+
+        <p style="margin-top: 15px; font-size: 0.9rem; cursor: pointer;" onclick="toggleView()">
+            <span id="toggle-msg">¿No tienes cuenta? Regístrate aquí</span>
+        </p>
+
+        <a href="../index.html" class="link-volver" style="display: block; margin-top: 20px; text-decoration: none;">Volver al inicio</a>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // --- CONFIGURACIÓN DE GOOGLE ---
+        function handleCredentialResponse(response) {
+            // El 'response.credential' es el token JWT que nos da Google
+            console.log("Token de Google:", response.credential);
+
+            fetch('http://localhost:3000/api/auth/google', { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: response.credential })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.token) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                    alert("¡Bienvenido/a " + data.usuario.nombre + "!");
+                    window.location.href = "../index.html";
+                } else {
+                    alert("Error: " + data.mensaje);
+                }
+            })
+            .catch(err => {
+                console.error("Error en login Google:", err);
+                alert("No se pudo conectar con el servidor.");
+            });
+        }
+
+        window.onload = function () {
+            // Inicializar el cliente de Google
+            google.accounts.id.initialize({
+                client_id: "212122215331-vd76dl29gji58dtajan2cthljnl9q83j.apps.googleusercontent.com", 
+                callback: handleCredentialResponse
+            });
+
+            // Renderizar el botón oficial
+            google.accounts.id.renderButton(
+                document.getElementById("google-btn-container"),
+                { 
+                    theme: "outline", 
+                    size: "large", 
+                    text: "continue_with", // O "signin_with"
+                    shape: "pill",
+                    width: "280"
+                } 
+            );
+        };
+
+        // --- TU FUNCIÓN TOGGLE EXISTENTE ---
+        function toggleView() {
+            const nom = document.getElementById('nombre-container');
+            const tel = document.getElementById('telefono-container');
+            const tit = document.getElementById('auth-title');
+            const btn = document.getElementById('btn-text');
+            const msg = document.getElementById('toggle-msg');
+            const reqs = document.getElementById('password-requirements');
+
+            if (nom.style.display === 'none') {
+                nom.style.display = 'block'; tel.style.display = 'block'; reqs.style.display = 'block';
+                tit.innerText = 'Crear Cuenta'; btn.innerText = 'REGISTRARSE';
+                msg.innerText = '¿Ya tienes cuenta? Inicia sesión';
+            } else {
+                nom.style.display = 'none'; tel.style.display = 'none'; reqs.style.display = 'none';
+                tit.innerText = 'Iniciar Sesión'; btn.innerText = 'INGRESAR';
+                msg.innerText = '¿No tienes cuenta? Regístrate aquí';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "mercadopago": "^2.9.0"
+    "dotenv": "^17.3.1",
+    "mercadopago": "^2.9.0",
+    "pg": "^8.18.0"
   }
 }

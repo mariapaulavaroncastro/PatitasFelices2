@@ -5,7 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../styles.css">
   <link rel="icon" type="image/jpeg" href="../images/logo.jpg">
-  <title>Donaciones</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <title>Donaciones - Patitas Felices</title>
+  
+  <style>
+    /* Estilos para campos autocompletados */
+    .input-bloqueado { background-color: #f8f9fa; color: #6c757d; cursor: not-allowed; border: 1px solid #ced4da; }
+    .alerta-donacion {
+      background-color: #fff3cd;
+      color: #856404;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #ffeeba;
+      display: none;
+      font-size: 0.9em;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -25,35 +42,41 @@
   </header>
 
   <main>
- <div class="panel-emocional donacion-panel">
-  <img src="../images/donacion.jpg" alt="Manos sosteniendo un corazón" class="panel-imagen">
-  <div class="panel-texto">
-    Tus aportes nos ayudan a rescatar, alimentar y dar cuidados médicos a más animales.
-  </div>
-</div>
+    <div class="panel-emocional donacion-panel">
+      <img src="../images/donacion.jpg" alt="Manos sosteniendo un corazón" class="panel-imagen">
+      <div class="panel-texto">
+        Tus aportes nos ayudan a rescatar, alimentar y dar cuidados médicos a más animales.
+      </div>
+    </div>
 
-
-    <!-- 🐾 Formulario simplificado -->
     <section class="formulario-donacion">
       <h2>Realiza tu donación</h2>
-      <form action="https://link.mercadopago.com.co/patitasfelicespagos" method="get" target="_blank">
+
+      <div id="alertaSesionDonar" class="alerta-donacion">
+        <i class="fas fa-heart"></i> ¡Hola <strong id="nombreDonante"></strong>! Gracias por tu generosidad. Tus datos ya están listos.
+      </div>
+
+      <form id="formDonacion">
         <label>Nombre completo:</label><br>
-        <input type="text" name="nombre" required><br><br>
+        <input type="text" name="nombre" id="don-nombre" required><br><br>
 
         <label>Teléfono (formato internacional):</label><br>
-        <input type="text" name="telefono" placeholder="+573001234567" required><br><br>
+        <input type="text" name="telefono" id="don-telefono" placeholder="+573001234567" required><br><br>
+
+        <label>Correo electrónico:</label><br>
+        <input type="email" name="correo" id="don-correo" required><br><br>
 
         <label>Monto a donar (COP):</label><br>
-        <input type="number" name="monto" min="1000" required><br><br>
+        <input type="number" name="monto" min="1000" placeholder="Ej: 20000" required><br><br>
 
         <label>Mensaje adicional (opcional):</label><br>
-        <textarea name="mensaje" rows="3"></textarea><br><br>
+        <textarea name="mensaje" rows="3" placeholder="Déjanos un mensaje..."></textarea><br><br>
 
-        <button type="submit">Donar con Mercado Pago 🐾</button>
+        <button type="submit" id="btnDonar">Donar con Mercado Pago 🐾</button>
       </form>
 
       <div style="text-align: center; margin-top: 20px; color: #555;">
-        <p><small>Tu donación se procesa de forma segura.</small></p>
+        <p><small>Tu donación se procesa de forma segura a través de:</small></p>
         <img 
           src="../images/images.png"
           alt="Medios de pago de Mercado Pago" 
@@ -63,8 +86,82 @@
   </main>
 
   <footer>
-    <p>© 2025 Patitas Felices. Todos los derechos reservados.</p>
+    <p>© 2026 Patitas Felices. Todos los derechos reservados.</p>
   </footer>
-  
+
+  <script>
+    // --- 1. LÓGICA DE AUTOCOMPLETADO ---
+    function cargarDatosDonacion() {
+      const usuarioData = localStorage.getItem('usuario');
+      
+      if (usuarioData) {
+        const usuario = JSON.parse(usuarioData);
+        
+        // Elementos del DOM
+        const inputNombre = document.getElementById('don-nombre');
+        const inputCorreo = document.getElementById('don-correo');
+        const alerta = document.getElementById('alertaSesionDonar');
+        const nombreEtiqueta = document.getElementById('nombreDonante');
+
+        // Autocompletar valores
+        inputNombre.value = usuario.nombre;
+        inputCorreo.value = usuario.email;
+
+        // Bloquear campos para que no tenga que re-escribirlos
+        inputNombre.readOnly = true;
+        inputCorreo.readOnly = true;
+        inputNombre.classList.add('input-bloqueado');
+        inputCorreo.classList.add('input-bloqueado');
+
+        // Mostrar mensaje de bienvenida
+        nombreEtiqueta.textContent = usuario.nombre;
+        alerta.style.display = 'block';
+      }
+    }
+
+    // --- 2. LÓGICA DE ENVÍO Y REDIRECCIÓN ---
+    document.getElementById('formDonacion').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const btn = document.getElementById('btnDonar');
+      const textoOriginal = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Procesando...";
+
+      const formData = new FormData(e.target);
+      const datos = Object.fromEntries(formData);
+      
+      // Agregamos el ID del método de pago (1 = Mercado Pago)
+      datos.metodo_pago_id = 1;
+
+      try {
+        const respuesta = await fetch('http://localhost:3000/donaciones', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+
+        const resultado = await respuesta.json();
+
+        if (respuesta.ok) {
+          alert("💖 ¡Gracias por tu apoyo! Te redirigiremos ahora a la plataforma segura de Mercado Pago.");
+          // Redirección al link de pago generado por el backend
+          window.location.href = resultado.enlacePago; 
+        } else {
+          alert("Error: " + (resultado.mensaje || "No se pudo procesar el pago"));
+          btn.disabled = false;
+          btn.textContent = textoOriginal;
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("❌ No se pudo conectar con el servidor de pagos. Revisa tu conexión.");
+        btn.disabled = false;
+        btn.textContent = textoOriginal;
+      }
+    });
+
+    // --- 3. EJECUTAR AL CARGAR ---
+    window.onload = cargarDatosDonacion;
+  </script>
 </body>
 </html>

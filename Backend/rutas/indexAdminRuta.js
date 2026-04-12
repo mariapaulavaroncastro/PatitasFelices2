@@ -1,13 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-// Este enrutador principal unifica todas las rutas de administración.
+// 1. Importamos el controlador que tiene la nueva lógica y seguridad
+const loginController = require('../controladores/loginAdmin');
 
-// Rutas de autenticación de admin (login)
-router.use(require('./adminRuta'));
+// 2. Creamos la ruta POST que recibe los datos del Frontend y los manda al Controlador
+router.post('/login', loginController.login);
 
-// Rutas para gestionar adopciones (/admin/adopciones)
-router.use(require('./adopcionAdminRuta'));
-router.use('/noticias', require('./noticiasAdminRuta'));
+
 
 module.exports = router;

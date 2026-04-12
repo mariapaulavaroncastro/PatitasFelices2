@@ -4,115 +4,150 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../styles.css" />
-  <title>Gestión de Noticias</title>
+  <title>Gestión de Noticias - Admin</title>
 </head>
 <body>
   <header>
-    <h1> Panel de Noticias</h1>
+    <h1>Panel de Gestión de Noticias</h1>
   </header>
 
   <main class="formulario">
     <h2>Publicar nueva noticia</h2>
-    <form id="formNoticia" enctype="multipart/form-data">
+    <form id="formNoticia">
       <label>Título:</label>
-      <input type="text" name="titulo" required title="Título de la noticia" />
+      <input type="text" name="titulo" required />
+      
       <label>Contenido:</label>
-      <textarea name="contenido" rows="5" required title="Contenido de la noticia"></textarea>
-      <label>Imagen:</label>
-      <input type="file" name="imagen" accept="image/*" required title="Imagen para la noticia" />
-      <button type="submit">Publicar</button>
+      <textarea name="contenido" rows="5" required></textarea>
+      
+      <label>URL de la Imagen (Link):</label>
+      <input type="text" name="imagen_url" placeholder="https://ejemplo.com/foto.jpg" required />
+      
+      <button type="submit">Publicar Noticia 🐾</button>
     </form>
 
+    <hr>
     <h2>Noticias publicadas</h2>
     <section id="listaNoticias"></section>
 
-    <div id="formEditarNoticia" class="oculto">
+    <div id="formEditarNoticia" class="oculto" style="background: #f9f9f9; padding: 20px; border: 1px dashed #ccc; margin-top: 20px;">
       <h3>Editar noticia</h3>
-      <form id="editarNoticia" enctype="multipart/form-data">
-        <input type="hidden" name="id_noticia" />
-        <label>Título:</label>
-        <input type="text" name="titulo" required title="Nuevo título de la noticia" />
-        <label>Contenido:</label>
-        <textarea name="contenido" rows="5" required title="Nuevo contenido de la noticia"></textarea>
-        <label>Imagen (opcional):</label>
-        <input type="file" name="imagen" accept="image/*" title="Nueva imagen para la noticia" />
-        <button type="submit">Actualizar</button>
+      <form id="editarNoticia">
+        <input type="hidden" name="id" />
+        <label>Nuevo Título:</label>
+        <input type="text" name="titulo" required />
+        <label>Nuevo Contenido:</label>
+        <textarea name="contenido" rows="5" required></textarea>
+        <label>Nueva URL de Imagen:</label>
+        <input type="text" name="imagen_url" required />
+        <button type="submit">Actualizar Cambios</button>
+        <button type="button" onclick="document.getElementById('formEditarNoticia').classList.add('oculto')">Cancelar</button>
       </form>
     </div>
   </main>
 
   <script>
-    if (!localStorage.getItem('adminId')) {
-      window.location.href = 'login.html';
-    }
-
+    // Verificación de sesión
+    if (!localStorage.getItem('adminId')) { window.location.href = 'login.html'; }
     const adminId = localStorage.getItem('adminId');
-    let noticias = [];
+    let noticiasGuardadas = [];
 
+    // --- CREAR NOTICIA ---
     document.getElementById('formNoticia').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const form = e.target;
-      const datos = new FormData(form);
-      datos.append('id_admin', adminId);
+      const datos = Object.fromEntries(new FormData(e.target));
+      
+      // Ajuste: Se usa 'autor_id' para coincidir con la base de datos
+      datos.autor_id = adminId;
 
-      await fetch('http://localhost:3000/admin/noticias', {
+      const res = await fetch('http://localhost:3000/admin/noticias', {
         method: 'POST',
-        body: datos
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos)
       });
 
-      form.reset();
-      cargarNoticias();
+      if(res.ok) {
+        alert(" Noticia publicada");
+        e.target.reset();
+        cargarNoticias();
+      } else {
+        alert(" Error al publicar. Revisa la consola.");
+      }
     });
 
+    // --- LISTAR NOTICIAS ---
     async function cargarNoticias() {
-      const res = await fetch('http://localhost:3000/admin/noticias');
-      noticias = await res.json();
-      const contenedor = document.getElementById('listaNoticias');
-      contenedor.innerHTML = '';
+      try {
+        const res = await fetch('http://localhost:3000/noticias');
+        noticiasGuardadas = await res.json();
+        const contenedor = document.getElementById('listaNoticias');
+        contenedor.innerHTML = '';
 
-      noticias.forEach(n => {
-        const bloque = document.createElement('article');
-        bloque.innerHTML = `
-          <h4>${n.titulo}</h4>
-          <p>${n.contenido}</p>
-          <img src="http://localhost:3000/images/${n.imagen}" alt="Imagen de la noticia" style="max-width:200px;" onerror="this.src='../images/default.jpg'" />
-          <span class="fecha">${new Date(n.fecha_publicacion).toLocaleDateString()}</span>
-          <button onclick="eliminarNoticia(${n.id_noticia})">Eliminar</button>
-          <button onclick="mostrarFormularioEdicion(${n.id_noticia})">Editar</button>
-        `;
-        contenedor.appendChild(bloque);
-      });
+        noticiasGuardadas.forEach(n => {
+          const bloque = document.createElement('article');
+          bloque.style.border = "1px solid #eee";
+          bloque.style.padding = "10px";
+          bloque.style.marginBottom = "10px";
+          
+          // Ajuste: n.id y n.imagen_url (nombres reales de tu tabla)
+          bloque.innerHTML = `
+            <h4>${n.titulo}</h4>
+            <img src="${n.imagen_url}" style="max-width:150px; border-radius:4px;" onerror="this.src='../images/default.jpg'">
+            <br><br>
+            <button onclick="mostrarFormularioEdicion(${n.id})" style="background:#ffcc00; cursor:pointer;">Editar</button>
+            <button onclick="eliminarNoticia(${n.id})" style="background:#ff4444; color:white; cursor:pointer;">Eliminar</button>
+          `;
+          contenedor.appendChild(bloque);
+        });
+      } catch (error) {
+        console.error("Error al cargar lista:", error);
+      }
     }
 
+    // --- ELIMINAR ---
     async function eliminarNoticia(id) {
-  await fetch(`http://localhost:3000/admin/noticias/${id}`, {
-    method: 'DELETE'
-  });
-  cargarNoticias();
-}
-
-    function mostrarFormularioEdicion(id) {
-      const noticia = noticias.find(n => n.id_noticia === id);
-      const form = document.getElementById('editarNoticia');
-      form.titulo.value = noticia.titulo;
-      form.contenido.value = noticia.contenido;
-      form.id_noticia.value = id;
-      document.getElementById('formEditarNoticia').classList.remove('oculto');
+      if(!confirm("¿Seguro que deseas eliminar esta noticia?")) return;
+      
+      const res = await fetch(`http://localhost:3000/admin/noticias/${id}`, { method: 'DELETE' });
+      
+      if(res.ok) {
+        alert(" Noticia eliminada");
+        cargarNoticias();
+      }
     }
 
+    // --- MOSTRAR EDICIÓN ---
+    function mostrarFormularioEdicion(id) {
+      // Ajuste: Buscar por 'id'
+      const n = noticiasGuardadas.find(item => item.id === id);
+      const form = document.getElementById('editarNoticia');
+      
+      form.id.value = n.id;
+      form.titulo.value = n.titulo;
+      form.contenido.value = n.contenido;
+      form.imagen_url.value = n.imagen_url;
+      
+      document.getElementById('formEditarNoticia').classList.remove('oculto');
+      window.scrollTo({ top: document.getElementById('formEditarNoticia').offsetTop, behavior: 'smooth' });
+    }
+
+    // --- ACTUALIZAR ---
     document.getElementById('editarNoticia').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const form = e.target;
-      const datos = new FormData(form);
+      const datos = Object.fromEntries(new FormData(e.target));
+      const id = datos.id; // Nombre corregido
 
-      await fetch(`http://localhost:3000/admin/noticias/${form.id_noticia.value}`, {
+      const res = await fetch(`http://localhost:3000/admin/noticias/${id}`, {
         method: 'PUT',
-        body: datos
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos)
       });
 
-      document.getElementById('formEditarNoticia').classList.add('oculto');
-      form.reset();
-      cargarNoticias();
+      if(res.ok) {
+        alert("✨ Noticia actualizada");
+        document.getElementById('formEditarNoticia').classList.add('oculto');
+        cargarNoticias();
+      }
     });
 
     cargarNoticias();

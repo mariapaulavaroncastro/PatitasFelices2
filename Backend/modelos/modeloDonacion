@@ -1,0 +1,37 @@
+class Donacion {
+  constructor({ nombre, correo, monto, metodo_pago_id, telefono, mensaje, usuario_id = null }) {
+    this.nombre = nombre || 'Anónimo';
+    this.correo = correo || null;
+    this.monto = parseFloat(monto);
+    this.metodo_pago_id = parseInt(metodo_pago_id) || 1;
+    this.telefono = telefono || null;
+    this.mensaje = mensaje ? mensaje.substring(0, 500) : ''; // Sanitización inicial
+    this.usuario_id = usuario_id;
+  }
+
+  // Motor de Decisión Financiera
+  evaluarViabilidadTransaccional() {
+    // 1. Integridad de la estructura
+    if (isNaN(this.monto) || isNaN(this.metodo_pago_id)) {
+      throw new Error("Violación de integridad: Formato de datos transaccionales inválido.");
+    }
+
+    // 2. Operadores lógicos de negocio
+    const superaMontoMinimo = this.monto >= 5000;
+    const metodoValido = [1, 2, 3, 4].includes(this.metodo_pago_id); // Ej: 1:Nequi, 2:PSE, etc.
+    
+    // 3. Regla de Seguridad en Redes (Antifraude / AML - Anti Lavado de Activos)
+    // Si la donación es anormalmente alta mayor a $2,000,000) y el usuario es ANÓNIMO, se bloquea por riesgo.
+    const esRiesgoFraude = this.monto > 2000000 && !this.usuario_id;
+
+    // 4. Evaluación Unificada
+    if (superaMontoMinimo && metodoValido && !esRiesgoFraude) {
+      return true; // Transacción limpia
+    } else {
+      // Mensaje genérico para no dar pistas técnicas a posibles bots atacantes
+      throw new Error("Transacción declinada: La operación no cumple con las políticas de seguridad financiera de la plataforma.");
+    }
+  }
+}
+
+module.exports = Donacion;

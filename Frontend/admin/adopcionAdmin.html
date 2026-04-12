@@ -4,145 +4,206 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../styles.css" />
-  <title>Gestión de Adopciones</title>
+  <title>Gestión de Adopciones - Admin</title>
+  
+  <script>
+    const usuarioData = localStorage.getItem('usuario');
+    const token = localStorage.getItem('token');
+    const usuario = usuarioData ? JSON.parse(usuarioData) : null;
+
+    if (!token || !usuario || usuario.rol !== 'admin') {
+        alert("Acceso denegado. Redirigiendo al login...");
+        window.location.href = "../login/login.html";
+    }
+  </script>
+
+  <style>
+    .oculto { display: none; }
+    article { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fff; }
+    img { border-radius: 5px; margin-top: 10px; display: block; object-fit: cover; height: 150px; width: 200px; background: #eee; }
+    .formulario { max-width: 600px; margin: 20px auto; padding: 0 15px; }
+    form label { display: block; margin-top: 10px; font-weight: bold; }
+    form input, form textarea, form select { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px; }
+    button { cursor: pointer; padding: 10px 15px; margin-top: 10px; border-radius: 4px; border: none; }
+    .btn-publicar { background-color: #28a745; color: white; width: 100%; }
+    .btn-editar { background-color: #ffc107; }
+    .btn-eliminar { background-color: #dc3545; color: white; }
+    .btn-cancelar { background-color: #6c757d; color: white; }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>🐶 Panel de Adopciones</h1>
+  <header style="text-align: center; padding: 20px; background: #f8f9fa;">
+    <h1>🐶 Panel de Administración</h1>
+    <button onclick="cerrarSesion()" style="background: #333; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Cerrar Sesión</button>
   </header>
 
   <main class="formulario">
-    <h2>Publicar nuevo animal</h2>
-    <form id="formAdopcion" enctype="multipart/form-data">
-      <label for="nombre">Nombre:</label>
-      <input type="text" id="nombre" name="nombre" placeholder="Ej. Max" required title="Nombre del animal" />
+    <section>
+      <h2>Publicar nueva mascota</h2>
+      <form id="formAdopcion">
+        <label>Nombre:</label>
+        <input type="text" name="nombre" placeholder="Ej. Max" required />
 
-      <label for="edad">Edad:</label>
-      <input type="text" id="edad" name="edad" placeholder="Ej. 2 años" required title="Edad del animal" />
+        <label>Edad:</label>
+        <input type="text" name="edad" placeholder="Ej. 2 años" required />
 
-      <label for="descripcion">Descripción:</label>
-      <textarea id="descripcion" name="descripcion" placeholder="Describe al animal" required title="Descripción del animal"></textarea>
+        <label>Descripción:</label>
+        <textarea name="descripcion" placeholder="Describe al animal" required></textarea>
 
-      <label for="imagen">Imagen:</label>
-      <input type="file" id="imagen" name="imagen" accept="image/*" required title="Sube una imagen del animal" />
+        <label>URL de la Imagen (Link de internet):</label>
+        <input type="url" name="imagen_url" placeholder="https://ejemplo.com/foto.jpg" required />
 
-      <label for="categoria">Categoría:</label>
-      <select id="categoria" name="categoria" required title="Selecciona la especie del animal">
-        <option value="">Selecciona una categoría</option>
-        <option value="Perro">Perro</option>
-        <option value="Gato">Gato</option>
-        <option value="Conejo">Conejo</option>
-        <option value="Loro">Loro</option>
-      </select>
-
-      <button type="submit">Publicar</button>
-    </form>
-
-    <h2>Animales publicados</h2>
-    <section id="listaAdopciones"></section>
-
-    <div id="formEditarAdopcion" class="oculto">
-      <h3>Editar animal</h3>
-      <form id="editarAdopcion" enctype="multipart/form-data">
-        <input type="hidden" name="id_adopcion" />
-
-        <label for="editarNombre">Nombre:</label>
-        <input type="text" id="editarNombre" name="nombre" required title="Nuevo nombre del animal" />
-
-        <label for="editarEdad">Edad:</label>
-        <input type="text" id="editarEdad" name="edad" required title="Nueva edad del animal" />
-
-        <label for="editarDescripcion">Descripción:</label>
-        <textarea id="editarDescripcion" name="descripcion" required title="Descripción del animal"></textarea>
-
-        <label for="editarImagen">Imagen (opcional):</label>
-        <input type="file" id="editarImagen" name="imagen" accept="image/*" title="Sube una nueva imagen si deseas cambiarla" />
-
-        <label for="editarCategoria">Categoría:</label>
-        <select id="editarCategoria" name="categoria" required title="Selecciona la especie del animal">
-          <option value="Perro">Perro</option>
-          <option value="Gato">Gato</option>
-          <option value="Conejo">Conejo</option>
-          <option value="Loro">Loro</option>
+        <label>Categoría:</label>
+        <select name="categoria" required>
+          <option value="">Selecciona una categoría</option>
+          <option value="1">Perro</option>
+          <option value="2">Gato</option>
+          <option value="3">Conejo</option>
+          <option value="4">Ave</option>
+          <option value="5">Otro</option>
         </select>
 
-        <button type="submit">Actualizar</button>
+        <button type="submit" class="btn-publicar">Publicar Mascota</button>
       </form>
+    </section>
+
+    <hr style="margin: 40px 0;">
+
+    <h2>Mascotas publicadas</h2>
+    <section id="listaAdopciones">Cargando mascotas...</section>
+
+    <div id="formEditarAdopcion" class="oculto" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+      <div style="background: white; padding: 30px; border-radius: 10px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;">
+        <h3>Editar mascota</h3>
+        <form id="editarAdopcion">
+          <input type="hidden" id="id_adopcion_editar" name="id_adopcion" />
+          <label>Nombre:</label>
+          <input type="text" id="editarNombre" name="nombre" required />
+          <label>Edad:</label>
+          <input type="text" id="editarEdad" name="edad" required />
+          <label>Descripción:</label>
+          <textarea id="editarDescripcion" name="descripcion" required></textarea>
+          <label>URL de la Imagen:</label>
+          <input type="url" id="editarImagen" name="imagen_url" required />
+          <label>Categoría:</label>
+          <select id="editarCategoria" name="categoria" required>
+            <option value="1">Perro</option>
+            <option value="2">Gato</option>
+            <option value="3">Conejo</option>
+            <option value="4">Ave</option>
+            <option value="5">Otro</option>
+          </select>
+          <button type="submit" class="btn-publicar">Guardar Cambios</button>
+          <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+        </form>
+      </div>
     </div>
   </main>
 
   <script>
-    if (!localStorage.getItem('adminId')) {
-      window.location.href = 'login.html';
-    }
+    let mascotasGlobal = [];
 
-    const adminId = localStorage.getItem('adminId');
-    let animales = [];
+    // Funciones de carga y CRUD (Se mantienen igual, están bien hechas)
+    async function cargarAdopciones() {
+      try {
+        const res = await fetch('http://localhost:3000/admin/adopciones');
+        mascotasGlobal = await res.json();
+        
+        const contenedor = document.getElementById('listaAdopciones');
+        contenedor.innerHTML = '';
+
+        if (mascotasGlobal.length === 0) {
+            contenedor.innerHTML = '<p>No hay mascotas publicadas.</p>';
+            return;
+        }
+
+        mascotasGlobal.forEach(a => {
+          const rutaImagen = a.imagen || 'https://via.placeholder.com/150';
+          const bloque = document.createElement('article');
+          bloque.innerHTML = `
+            <h4>${a.nombre} <span style="color:gray; font-size:0.8em;">(${a.categoria})</span></h4>
+            <p>${a.descripcion}</p>
+            <img src="${rutaImagen}" alt="${a.nombre}" onerror="this.src='https://via.placeholder.com/150'" />
+            <div style="margin-top: 10px;">
+                <button class="btn-editar" onclick="mostrarFormularioEdicion(${a.id_adopcion})">Editar ✏️</button>
+                <button class="btn-eliminar" onclick="eliminarAdopcion(${a.id_adopcion})">Eliminar 🗑️</button>
+            </div>
+          `;
+          contenedor.appendChild(bloque);
+        });
+      } catch (error) {
+        console.error("Error cargando lista:", error);
+      }
+    }
 
     document.getElementById('formAdopcion').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const form = e.target;
-      const datos = new FormData(form);
-      datos.append('id_admin', adminId);
-
-      await fetch('http://localhost:3000/admin/adopciones', {
-        method: 'POST',
-        body: datos
-      });
-
-      form.reset();
-      cargarAdopciones();
+      const formData = new FormData(e.target);
+      const datos = Object.fromEntries(formData);
+      try {
+        const res = await fetch('http://localhost:3000/admin/adopciones', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+        if (res.ok) {
+          alert("Mascota publicada");
+          e.target.reset();
+          cargarAdopciones();
+        }
+      } catch (error) { console.error(error); }
     });
 
-    async function cargarAdopciones() {
-      const res = await fetch('http://localhost:3000/admin/adopciones');
-      animales = await res.json();
-      const contenedor = document.getElementById('listaAdopciones');
-      contenedor.innerHTML = '';
-
-      animales.forEach(a => {
-        const bloque = document.createElement('article');
-        bloque.innerHTML = `
-          <h4>${a.nombre} (${a.edad})</h4>
-          <p>${a.descripcion}</p>
-          <img src="http://localhost:3000/images/${a.imagen}" alt="Foto de ${a.nombre}" style="max-width:200px;" onerror="this.src='../images/default.jpg'" />
-          <button onclick="eliminarAdopcion(${a.id_adopcion})">Eliminar</button>
-          <button onclick="mostrarFormularioEdicion(${a.id_adopcion})">Editar</button>
-        `;
-        contenedor.appendChild(bloque);
-      });
-    }
-
     async function eliminarAdopcion(id) {
-      await fetch(`http://localhost:3000/admin/adopciones/${id}`, { method: 'DELETE' });
-      cargarAdopciones();
+      if(confirm('¿Seguro que quieres borrar esta mascota?')) {
+        try {
+          const res = await fetch(`http://localhost:3000/admin/adopciones/${id}`, { method: 'DELETE' });
+          if(res.ok) cargarAdopciones();
+        } catch (error) { console.error(error); }
+      }
     }
 
     function mostrarFormularioEdicion(id) {
-      const animal = animales.find(a => a.id_adopcion === id);
-      const form = document.getElementById('editarAdopcion');
-      form.querySelector('#editarNombre').value = animal.nombre;
-      form.querySelector('#editarEdad').value = animal.edad;
-      form.querySelector('#editarDescripcion').value = animal.descripcion;
-      form.querySelector('#editarCategoria').value = animal.categoria;
-      form.id_adopcion.value = id;
-      document.getElementById('formEditarAdopcion').classList.remove('oculto');
+      const animal = mascotasGlobal.find(a => a.id_adopcion === id);
+      if (!animal) return;
+      document.getElementById('id_adopcion_editar').value = id;
+      document.getElementById('editarNombre').value = animal.nombre;
+      document.getElementById('editarEdad').value = animal.edad;
+      document.getElementById('editarDescripcion').value = animal.descripcion;
+      document.getElementById('editarImagen').value = animal.imagen;
+      const categoriasMap = {"Perro":1, "Gato":2, "Conejo":3, "Ave":4, "Otro":5};
+      document.getElementById('editarCategoria').value = categoriasMap[animal.categoria] || 5;
+      document.getElementById('formEditarAdopcion').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+      document.getElementById('formEditarAdopcion').style.display = 'none';
     }
 
     document.getElementById('editarAdopcion').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const form = e.target;
-      const datos = new FormData(form);
-
-      await fetch(`http://localhost:3000/admin/adopciones/${form.id_adopcion.value}`, {
-        method: 'PUT',
-        body: datos
-      });
-
-      document.getElementById('formEditarAdopcion').classList.add('oculto');
-      form.reset();
-      cargarAdopciones();
+      const id = document.getElementById('id_adopcion_editar').value;
+      const formData = new FormData(e.target);
+      const datos = Object.fromEntries(formData);
+      try {
+        const res = await fetch(`http://localhost:3000/admin/adopciones/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+        if (res.ok) {
+          alert("Mascota actualizada");
+          cerrarModal();
+          cargarAdopciones();
+        }
+      } catch (error) { console.error(error); }
     });
+
+    // CERRAR SESIÓN LIMPIO
+    function cerrarSesion() {
+      localStorage.clear(); // Borra token y usuario de un solo golpe
+      window.location.href = "../login/login.html";
+    }
 
     cargarAdopciones();
   </script>

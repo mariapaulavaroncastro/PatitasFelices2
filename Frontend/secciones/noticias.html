@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../styles.css" />
   <link rel="icon" type="image/jpeg" href="../images/logo.jpg" />
-  <title>Noticias</title>
+  <title>Noticias - Patitas Felices</title>
 </head>
 <body>
   <header>
@@ -13,7 +13,6 @@
       <img src="../images/logo.jpg" alt="Logo Patitas Felices" class="logo" />
     </div>
     <h1>Noticias</h1>
-
     <nav>
       <ul>
         <li><a href="../index.html">Inicio</a></li>
@@ -29,7 +28,6 @@
       <h3>Descubre cómo ayudamos a rescatar y cuidar animales en tu comunidad.</h3>
     </section>
 
-    <!-- 🔽 Sección dinámica de noticias -->
     <section class="noticias" id="contenedorNoticias"></section>
   </main>
 
@@ -37,33 +35,44 @@
     <p>© 2025 Patitas Felices. Todos los derechos reservados.</p>
   </footer>
 
-  <!-- 🔧 Script para cargar noticias, reacciones y comentarios -->
   <script>
     async function cargarNoticias() {
-      const res = await fetch('http://localhost:3000/noticias');
-      const noticias = await res.json();
-      const contenedor = document.getElementById('contenedorNoticias');
-      contenedor.innerHTML = '';
+      try {
+        const res = await fetch('http://localhost:3000/noticias');
+        const noticias = await res.json();
+        const contenedor = document.getElementById('contenedorNoticias');
+        contenedor.innerHTML = '';
 
-      for (const noticia of noticias) {
-        const bloque = document.createElement('article');
-        bloque.className = 'noticia';
-        bloque.innerHTML = `
-          <h4>${noticia.titulo}</h4>
-          <img src="http://localhost:3000/images/${noticia.imagen}" alt="Imagen de la noticia" class="imagen-noticia" onerror="this.src='../images/default.jpg'" />
-          <p>${noticia.contenido}</p>
-          <span class="fecha">${new Date(noticia.fecha_publicacion).toLocaleDateString()}</span>
-          <div class="interacciones">
-            <button onclick="reaccionar(${noticia.id_noticia}, this)">❤️ Me encanta (<span id="reacciones-${noticia.id_noticia}">0</span>)</button>
-            <div class="comentarios">
-              <textarea placeholder="Escribe un comentario..." onkeydown="comentar(event, ${noticia.id_noticia}, this)"></textarea>
-              <ul id="comentarios-${noticia.id_noticia}"></ul>
+        noticias.forEach(noticia => {
+          const bloque = document.createElement('article');
+          bloque.className = 'noticia';
+          
+          // CAMBIO CLAVE: noticia.imagen_url en lugar de noticia.imagen
+          bloque.innerHTML = `
+            <h4>${noticia.titulo}</h4>
+            <img src="${noticia.imagen_url}" 
+                 alt="${noticia.titulo}" 
+                 class="imagen-noticia" 
+                 onerror="this.src='../images/default.jpg'" />
+            <p>${noticia.contenido}</p>
+            <span class="fecha">${new Date(noticia.fecha_publicacion).toLocaleDateString()}</span>
+            
+            <div class="interacciones">
+              <button onclick="reaccionar(${noticia.id}, this)">❤️ Me encanta (<span id="reacciones-${noticia.id}">0</span>)</button>
+              <div class="comentarios">
+                <textarea placeholder="Escribe un comentario..." onkeydown="comentar(event, ${noticia.id}, this)"></textarea>
+                <ul id="comentarios-${noticia.id}"></ul>
+              </div>
             </div>
-          </div>
-        `;
-        contenedor.appendChild(bloque);
-        cargarComentarios(noticia.id_noticia);
-        cargarReacciones(noticia.id_noticia);
+          `;
+          contenedor.appendChild(bloque);
+          
+          // Cargar datos adicionales usando el nuevo ID
+          cargarComentarios(noticia.id);
+          cargarReacciones(noticia.id);
+        });
+      } catch (error) {
+        console.error("Error al cargar noticias:", error);
       }
     }
 

@@ -13,6 +13,29 @@
       <li><a href="adopcionAdmin.html">🐶 Gestión de Adopciones</a></li>
       <li><a href="noticiasAdmin.html">📰 Gestión de Noticias</a></li>
     </ul>
+    <br>
+    <button onclick="cerrarSesion()" style="background:#d11252; color:white; border:none; padding:10px; border-radius:5px; cursor:pointer;">Cerrar Sesión</button>
   </main>
+
+  <script>
+    // 1. Obtenemos el objeto usuario que guardamos en auth.js
+    const usuarioData = localStorage.getItem('usuario');
+    const token = localStorage.getItem('token');
+
+    // 2. Convertimos el texto del usuario a un objeto real de JS
+    const usuario = usuarioData ? JSON.parse(usuarioData) : null;
+
+    // 3. Verificamos: ¿Hay token? ¿Hay usuario? ¿Su rol es 'admin'?
+    if (!token || !usuario || usuario.rol !== 'admin') {
+        alert("¡Alto ahí! Zona restringida.");
+        window.location.href = "../login/login.html";
+    }
+
+    // Función para salir
+    function cerrarSesion() {
+        localStorage.clear();
+        window.location.href = "../index.html";
+    }
+  </script>
 </body>
 </html>

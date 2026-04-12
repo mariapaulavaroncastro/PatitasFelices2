@@ -1,17 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('../config/multer');
-const {
-  publicarNoticiaConImagen,
-  listarNoticias,
-  eliminarNoticia,
-  actualizarNoticia
-} = require('../controladores/noticiasAdminControlador');
+const noticiasAdminCtrl = require('../controladores/noticiasAdminControlador');
 
-router.get('/', listarNoticias);
-router.post('/', upload.single('imagen'), publicarNoticiaConImagen);
-router.put('/:id', upload.single('imagen'), actualizarNoticia);
-router.delete('/:id', eliminarNoticia);
+// Esto te servirá para confirmar en la terminal que todo cargó bien al arrancar
+console.log("Funciones detectadas:", Object.keys(noticiasAdminCtrl));
 
+router.get('/', noticiasAdminCtrl.listarNoticias);
+router.post('/', noticiasAdminCtrl.publicarNoticiaConImagen);
+router.delete('/:id', noticiasAdminCtrl.eliminarNoticia);
+router.put('/:id', noticiasAdminCtrl.actualizarNoticia); // Ahora sí funcionará
 
 module.exports = router;

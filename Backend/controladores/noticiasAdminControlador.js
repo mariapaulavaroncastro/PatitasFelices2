@@ -1,115 +1,86 @@
 const pool = require('../base-datos/conexionSQL');
-const fs = require('fs');
-const path = require('path');
 
-// Helper para construir la ruta de la imagen y eliminarla
-const eliminarArchivoImagen = (nombreArchivo) => {
-  if (!nombreArchivo) return;
-  try {
-    const rutaImagen = path.join(__dirname, '..', '..', 'Frontend', 'images', nombreArchivo);
-    if (fs.existsSync(rutaImagen)) {
-      fs.unlinkSync(rutaImagen);
-      console.log(`🗑️ Imagen eliminada: ${nombreArchivo}`);
-    }
-  } catch (error) {
-    console.error(`❌ Error al eliminar la imagen ${nombreArchivo}:`, error);
-  }
-};
-
+// 1. Publicar noticia
 const publicarNoticiaConImagen = async (req, res) => {
   try {
-    const { titulo, contenido, id_admin } = req.body;
-    const imagen = req.file ? req.file.originalname : null;
+    const { titulo, contenido, autor_id, imagen_url } = req.body;
 
-    // Validar que los datos necesarios están presentes
-    if (!titulo || !contenido || !id_admin || !imagen) {
-      return res.status(400).json({ mensaje: 'Faltan campos obligatorios (título, contenido, admin, imagen).' });
+    if (!titulo || !contenido || !autor_id || !imagen_url) {
+      return res.status(400).json({ mensaje: 'Faltan campos obligatorios (titulo, contenido, autor_id, imagen_url).' });
     }
 
-    await pool.request()
-      .input('titulo', titulo)
-      .input('contenido', contenido)
-      .input('id_admin', id_admin)
-      .input('imagen', imagen)
-      .query(`
-        INSERT INTO noticias (titulo, contenido, fecha_publicacion, id_admin, imagen)
-        VALUES (@titulo, @contenido, GETDATE(), @id_admin, @imagen)
-      `);
+    const query = `
+      INSERT INTO noticias (titulo, contenido, autor_id, imagen_url, fecha_publicacion)
+      VALUES ($1, $2, $3, $4, NOW())
+    `;
 
-    res.status(201).json({ mensaje: '✅ Noticia publicada con imagen' });
+    await pool.query(query, [titulo, contenido, autor_id, imagen_url]);
+
+    res.status(201).json({ mensaje: ' Noticia publicada con éxito' });
   } catch (error) {
-    console.error('❌ Error al publicar noticia:', error);
-    res.status(500).json({ mensaje: 'Error interno al publicar la noticia.' });
+    console.error(' Error al publicar noticia:', error.message);
+    res.status(500).json({ mensaje: 'Error al insertar en la base de datos.' });
   }
 };
 
+// 2. Listar noticias
 const listarNoticias = async (req, res) => {
   try {
-    const resultado = await pool.request().query(`
-      SELECT id_noticia, titulo, contenido, fecha_publicacion, imagen FROM noticias
+    const resultado = await pool.query(`
+      SELECT id, titulo, contenido, fecha_publicacion, imagen_url 
+      FROM noticias 
       ORDER BY fecha_publicacion DESC
     `);
-    res.json(resultado.recordset);
+    
+    // Enviamos los datos. Ojo: en el frontend ahora recibes .id e .imagen_url
+    res.json(resultado.rows); 
   } catch (error) {
-    console.error('❌ Error al listar noticias:', error);
-    res.status(500).json({ mensaje: 'Error interno al obtener las noticias.' });
+    console.error(' Error al listar noticias:', error.message);
+    res.status(500).json({ mensaje: 'Error al consultar noticias.' });
   }
 };
 
+// 3. Eliminar noticia
 const eliminarNoticia = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // 1. Obtener el nombre de la imagen antes de borrar el registro
-    const resultado = await pool.request()
-      .input('id', id)
-      .query('SELECT imagen FROM noticias WHERE id_noticia = @id');
+    const query = 'DELETE FROM noticias WHERE id = $1';
+    const resultado = await pool.query(query, [id]);
 
-    if (resultado.recordset.length > 0) {
-      const nombreImagen = resultado.recordset[0].imagen;
-      // 2. Eliminar la imagen del servidor
-      eliminarArchivoImagen(nombreImagen);
+    if (resultado.rowCount === 0) {
+      return res.status(404).json({ mensaje: 'La noticia no existe.' });
     }
 
-    // 3. Eliminar el registro de la base de datos
-    await pool.request().input('id', id).query(`
-      DELETE FROM noticias WHERE id_noticia = @id
-    `);
-
-    res.json({ mensaje: '✅ Noticia eliminada correctamente' });
+    res.json({ mensaje: ' Noticia eliminada correctamente' });
   } catch (error) {
-    console.error('❌ Error al eliminar noticia:', error);
-    res.status(500).json({ mensaje: 'Error interno al eliminar la noticia.' });
+    console.error(' Error al eliminar noticia:', error.message);
+    res.status(500).json({ mensaje: 'Error interno al eliminar.' });
   }
 };
 
+// 4. Actualizar noticia
 const actualizarNoticia = async (req, res) => {
   try {
     const { id } = req.params;
-    const { titulo, contenido } = req.body;
-    const nuevaImagen = req.file ? req.file.originalname : null;
+    const { titulo, contenido, imagen_url } = req.body;
 
-    const request = pool.request();
-    let querySet = ['titulo = @titulo', 'contenido = @contenido'];
-    request.input('id', id).input('titulo', titulo).input('contenido', contenido);
+    const query = `
+      UPDATE noticias 
+      SET titulo = $1, contenido = $2, imagen_url = $3 
+      WHERE id = $4
+    `;
 
-    if (nuevaImagen) {
-      // Si hay una nueva imagen, eliminar la antigua
-      const resultado = await pool.request().input('id', id).query('SELECT imagen FROM noticias WHERE id_noticia = @id');
-      if (resultado.recordset.length > 0) {
-        eliminarArchivoImagen(resultado.recordset[0].imagen);
-      }
-      querySet.push('imagen = @imagen');
-      request.input('imagen', nuevaImagen);
+    const resultado = await pool.query(query, [titulo, contenido, imagen_url, id]);
+
+    if (resultado.rowCount === 0) {
+      return res.status(404).json({ mensaje: 'Noticia no encontrada.' });
     }
 
-    const query = `UPDATE noticias SET ${querySet.join(', ')} WHERE id_noticia = @id`;
-    await request.query(query);
-
-    res.json({ mensaje: '✅ Noticia actualizada correctamente' });
+    res.json({ mensaje: ' Noticia actualizada correctamente' });
   } catch (error) {
-    console.error('❌ Error al actualizar noticia:', error);
-    res.status(500).json({ mensaje: 'Error interno al actualizar la noticia.' });
+    console.error(' Error al actualizar noticia:', error.message);
+    res.status(500).json({ mensaje: 'Error al actualizar.' });
   }
 };
 
