@@ -38,10 +38,10 @@ const registrar = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const passHash = await bcrypt.hash(contrasena, salt);
 
-        // Insertamos con rol_id 4 (Usuario) según la tabla de roles
+        // Insertamos con rol_id 2
         await pool.query(
             'INSERT INTO usuarios (rol_id, nombre, email, password_hash, estado) VALUES ($1, $2, $3, $4, $5)',
-            [4, nombre, email, passHash, 'activo']
+            [2, nombre, email, passHash, 'activo']
         );
 
         await auditoria(email, 'REGISTRO_NUEVO_USUARIO', ip, agent, { nombre, telefono });
