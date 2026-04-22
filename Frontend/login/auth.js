@@ -1,4 +1,4 @@
-const URL_API = "http://142.93.53.83/api/api/auth";
+const URL_API = "http://142.93.53.83/api/auth";
 
 document.addEventListener('DOMContentLoaded', () => {
     const authForm = document.getElementById('auth-form');
