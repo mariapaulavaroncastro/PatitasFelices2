@@ -41,7 +41,7 @@ app.get('/', (req, res) => {
 // Autenticación - AQUÍ APLICAMOS EL LIMITADOR
 const authRutas = require('./rutas/authRutas'); 
 // El limitador solo actúa en las rutas de login y registro
-app.use('/api/auth', loginLimiter, authRutas); 
+app.use('/auth', loginLimiter, authRutas);
 
 // --- RESTO DE LAS RUTAS ---
 app.use('/pagos', require('./rutas/pagosRuta'));
