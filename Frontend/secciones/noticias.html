@@ -38,7 +38,7 @@
   <script>
     async function cargarNoticias() {
       try {
-        const res = await fetch('http://localhost:3000/noticias');
+        const res = await fetch('http://142.93.53.83/api/noticias');
         const noticias = await res.json();
         const contenedor = document.getElementById('contenedorNoticias');
         contenedor.innerHTML = '';
@@ -77,7 +77,7 @@
     }
 
     async function reaccionar(id, boton) {
-      await fetch(`http://localhost:3000/noticias/${id}/reaccionar`, {
+      await fetch(`http://142.93.53.83/api/noticias/${id}/reaccionar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nombre: 'Anónimo', tipo: 'me_encanta' })
@@ -87,7 +87,7 @@
     }
 
     async function cargarReacciones(id) {
-      const res = await fetch(`http://localhost:3000/noticias/${id}/reacciones`);
+      const res = await fetch(`http://142.93.53.83/api/noticias/${id}/reacciones`);
       const datos = await res.json();
       const contador = datos.find(r => r.tipo === 'me_encanta')?.cantidad || 0;
       document.getElementById(`reacciones-${id}`).textContent = contador;
@@ -98,7 +98,7 @@
         event.preventDefault();
         const texto = textarea.value.trim();
         if (!texto) return;
-        await fetch(`http://localhost:3000/noticias/${id}/comentar`, {
+        await fetch(`http://142.93.53.83/api/noticias/${id}/comentar`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ texto })
@@ -109,7 +109,7 @@
     }
 
     async function cargarComentarios(id) {
-      const res = await fetch(`http://localhost:3000/noticias/${id}/comentarios`);
+      const res = await fetch(`http://142.93.53.83/api/noticias/${id}/comentarios`);
       const comentarios = await res.json();
       const lista = document.getElementById(`comentarios-${id}`);
       lista.innerHTML = '';

@@ -71,7 +71,7 @@
             // El 'response.credential' es el token JWT que nos da Google
             console.log("Token de Google:", response.credential);
 
-            fetch('http://localhost:3000/api/auth/google', { 
+            fetch('http://142.93.53.83/api/api/auth/google', { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token: response.credential })

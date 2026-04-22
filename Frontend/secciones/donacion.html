@@ -135,7 +135,7 @@
       datos.metodo_pago_id = 1;
 
       try {
-        const respuesta = await fetch('http://localhost:3000/donaciones', {
+        const respuesta = await fetch('http://142.93.53.83/api/donaciones', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(datos)

@@ -23,9 +23,9 @@ const loginLimiter = rateLimit({
     legacyHeaders: false,
 });
 
-app.use(cors({
-  origin: ['http://localhost:5500', 'http://127.0.0.1:5500'] 
-}));
+cors({
+    origin: ['http://142.93.53.83', 'http://localhost:5500']
+})
 
 app.use(express.json());
 
@@ -35,7 +35,7 @@ app.use('/images', express.static(path.join(__dirname, '..', 'Frontend', 'images
 // --- RUTAS ---
 
 app.get('/', (req, res) => {
-  res.redirect('http://127.0.0.1:5500/Frontend/index.html');
+  res.redirect('http://142.93.53.83/index.html');
 });
 
 // Autenticación - AQUÍ APLICAMOS EL LIMITADOR

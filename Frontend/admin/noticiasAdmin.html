@@ -60,7 +60,7 @@
       // Ajuste: Se usa 'autor_id' para coincidir con la base de datos
       datos.autor_id = adminId;
 
-      const res = await fetch('http://localhost:3000/admin/noticias', {
+      const res = await fetch('http://142.93.53.83/api/admin/noticias', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos)
@@ -78,7 +78,7 @@
     // --- LISTAR NOTICIAS ---
     async function cargarNoticias() {
       try {
-        const res = await fetch('http://localhost:3000/noticias');
+        const res = await fetch('http://142.93.53.83/api/noticias');
         noticiasGuardadas = await res.json();
         const contenedor = document.getElementById('listaNoticias');
         contenedor.innerHTML = '';
@@ -108,7 +108,7 @@
     async function eliminarNoticia(id) {
       if(!confirm("¿Seguro que deseas eliminar esta noticia?")) return;
       
-      const res = await fetch(`http://localhost:3000/admin/noticias/${id}`, { method: 'DELETE' });
+      const res = await fetch(`http://142.93.53.83/api/admin/noticias/${id}`, { method: 'DELETE' });
       
       if(res.ok) {
         alert(" Noticia eliminada");
@@ -137,7 +137,7 @@
       const datos = Object.fromEntries(new FormData(e.target));
       const id = datos.id; // Nombre corregido
 
-      const res = await fetch(`http://localhost:3000/admin/noticias/${id}`, {
+      const res = await fetch(`http://142.93.53.83/api/admin/noticias/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos)

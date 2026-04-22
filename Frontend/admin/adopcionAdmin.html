@@ -106,7 +106,7 @@
     // Funciones de carga y CRUD (Se mantienen igual, están bien hechas)
     async function cargarAdopciones() {
       try {
-        const res = await fetch('http://localhost:3000/admin/adopciones');
+        const res = await fetch('http://142.93.53.83/api/admin/adopciones');
         mascotasGlobal = await res.json();
         
         const contenedor = document.getElementById('listaAdopciones');
@@ -141,7 +141,7 @@
       const formData = new FormData(e.target);
       const datos = Object.fromEntries(formData);
       try {
-        const res = await fetch('http://localhost:3000/admin/adopciones', {
+        const res = await fetch('http://142.93.53.83/api/admin/adopciones', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(datos)
@@ -157,7 +157,7 @@
     async function eliminarAdopcion(id) {
       if(confirm('¿Seguro que quieres borrar esta mascota?')) {
         try {
-          const res = await fetch(`http://localhost:3000/admin/adopciones/${id}`, { method: 'DELETE' });
+          const res = await fetch(`http://142.93.53.83/api/admin/adopciones/${id}`, { method: 'DELETE' });
           if(res.ok) cargarAdopciones();
         } catch (error) { console.error(error); }
       }
@@ -186,7 +186,7 @@
       const formData = new FormData(e.target);
       const datos = Object.fromEntries(formData);
       try {
-        const res = await fetch(`http://localhost:3000/admin/adopciones/${id}`, {
+        const res = await fetch(`http://142.93.53.83/api/admin/adopciones/${id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(datos)

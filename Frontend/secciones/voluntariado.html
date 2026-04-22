@@ -123,7 +123,7 @@
       const datos = Object.fromEntries(formData);
 
       try {
-        const res = await fetch('http://localhost:3000/voluntariado', {
+        const res = await fetch('http://142.93.53.83/api/voluntariado', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(datos)
