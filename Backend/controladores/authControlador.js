@@ -122,7 +122,7 @@ const loginGoogle = async (req, res) => {
         let result = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
         let usuario = result.rows[0];
 
-        // 3. Si no existe, lo creamos automáticamente con Rol 4 (usuario)
+        // 3. Si no existe, lo creamos automáticamente con Rol 2(usuario)
         if (!usuario) {
             console.log("Creando nuevo usuario desde Google:", email);
             const nuevoUser = await pool.query(
